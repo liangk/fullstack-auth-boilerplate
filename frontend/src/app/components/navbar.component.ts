@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [RouterLink, MatToolbarModule, MatButtonModule, AsyncPipe, NgIf],
   template: `
-    <mat-toolbar color="primary">
+    <mat-toolbar color="primary" class="mat-elevation-z2">
       <a routerLink="/" mat-button>Home</a>
       <span class="spacer"></span>
       <ng-container *ngIf="(auth.isAuthenticated$ | async); else loggedOut">
