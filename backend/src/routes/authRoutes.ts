@@ -1,17 +1,21 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { login, me, register, logout } from '../controllers/authController';
+import { login, register, logout, refresh, profile } from '../controllers/authController';
 import { validateRequest } from '../middleware/validateRequest';
 import { requireAuth } from '../middleware/requireAuth';
+import { authRateLimiter } from '../middleware/authRateLimiter';
 
 const router = Router();
 
 router.post(
   '/register',
+  authRateLimiter,
   [
-    body('email').isEmail().withMessage('Valid email required'),
-    body('password').isString().isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
-    body('name').optional().isString().isLength({ max: 100 }),
+    body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
+    body('password')
+      .isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 0 })
+      .withMessage('Password must be at least 8 chars, include upper, lower, number'),
+    body('name').optional().isString().trim().escape().isLength({ max: 100 }),
   ],
   validateRequest,
   register
@@ -19,16 +23,21 @@ router.post(
 
 router.post(
   '/login',
+  authRateLimiter,
   [
-    body('email').isEmail().withMessage('Valid email required'),
+    body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
     body('password').isString().notEmpty().withMessage('Password is required'),
   ],
   validateRequest,
   login
 );
 
-router.post('/logout', logout);
+router.post('/refresh', authRateLimiter, refresh);
 
-router.get('/me', requireAuth, me);
+router.post('/logout', requireAuth, logout);
+
+router.get('/profile', requireAuth, profile);
+// Back-compat alias
+router.get('/me', requireAuth, profile);
 
 export default router;

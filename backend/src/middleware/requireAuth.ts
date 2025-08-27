@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { verifyToken } from '../utils/jwt';
-import { COOKIE_NAME } from '../utils/constants';
+import { verifyAccessToken } from '../utils/jwt';
+import { ACCESS_TOKEN_COOKIE } from '../utils/constants';
 
 declare global {
   namespace Express {
@@ -11,11 +11,11 @@ declare global {
 }
 
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.[COOKIE_NAME];
+  const token = req.cookies?.[ACCESS_TOKEN_COOKIE];
   if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
   try {
-    const payload = verifyToken(token);
+    const payload = verifyAccessToken(token);
     req.userId = payload.sub;
     return next();
   } catch (_e) {

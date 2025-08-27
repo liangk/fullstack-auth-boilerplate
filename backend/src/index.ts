@@ -7,6 +7,7 @@ import { apiLimiter } from './middleware/rateLimiter';
 import authRoutes from './routes/authRoutes';
 import healthRoutes from './routes/health';
 import { errorHandler } from './middleware/errorHandler';
+import { logger } from './middleware/logger';
 
 const app = express();
 const PORT = parseInt(process.env.PORT || '4000', 10);
@@ -33,6 +34,7 @@ app.set('trust proxy', 1);
 // Security and parsers
 app.use(helmet());
 app.use(cors(corsOptions));
+app.use(logger);
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
 
@@ -42,6 +44,8 @@ app.use('/api', apiLimiter);
 // Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
+// Also expose non-API prefixed auth routes to match requested paths
+app.use('/auth', authRoutes);
 
 // 404 handler
 app.use((_req: express.Request, res: express.Response) => {

@@ -10,10 +10,11 @@ datasource db {
 model User {
   id           String   @id @default(uuid())
   email        String   @unique
-  passwordHash String
+  password     String
   name         String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  tokenVersion Int      @default(0)
 
   @@index([email])
 }
