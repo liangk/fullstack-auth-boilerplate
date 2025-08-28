@@ -3,22 +3,23 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "ng serve --configuration development",
+    "start": "ng serve --configuration development --proxy-config proxy.conf.json",
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint"
   },
   "dependencies": {
     "@angular/animations": "latest",
+    "@angular/cdk": "latest",
     "@angular/common": "latest",
     "@angular/compiler": "latest",
     "@angular/core": "latest",
     "@angular/forms": "latest",
+    "@angular/material": "latest",
     "@angular/platform-browser": "latest",
     "@angular/platform-browser-dynamic": "latest",
     "@angular/router": "latest",
-    "@angular/material": "latest",
-    "@angular/cdk": "latest",
+    "ngx-lite-form": "^1.1.9",
     "rxjs": "latest",
     "tslib": "latest",
     "zone.js": "latest"
@@ -27,7 +28,7 @@
     "@angular-devkit/build-angular": "latest",
     "@angular/cli": "latest",
     "@angular/compiler-cli": "latest",
-    "typescript": "latest",
-    "sass": "latest"
+    "sass": "latest",
+    "typescript": "latest"
   }
 }

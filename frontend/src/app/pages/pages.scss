@@ -1,0 +1,9 @@
+:host { display: flex; flex-direction: column; height: 100%; flex: 1; }
+.dashboard_content { flex: 1; padding: 20px; display: flex; flex-direction: column; margin: 20px auto; padding: 20px; width: 1000px; background: #fff; border-radius: 10px;
+  .title2 { font-size: 24px; font-weight: 500; margin-bottom: 16px; }
+}
+.login_content, .register_content { padding: 30px; display: flex; flex-direction: column; margin: auto; padding: 20px; width: 480px; background: #fff; border-radius: 10px; flex: 0;
+  .title2 { font-size: 24px; font-weight: 500; margin-bottom: 16px; text-align: center; }
+  form { margin: auto; width: 320px; display: flex; flex-direction: column; gap: 10px; }
+  .actions { display: flex; align-items: center; justify-content: center; gap: 10px; }
+}

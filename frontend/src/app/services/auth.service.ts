@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { LoginRequest, RegisterRequest, UserProfile } from '../models/auth';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,6 +11,7 @@ export class AuthService {
   private _isAuthenticated$ = new BehaviorSubject<boolean>(false);
   isAuthenticated$ = this._isAuthenticated$.asObservable();
 
+  private router = inject(Router);
   private base = environment.apiUrl + '/auth';
 
   login(data: LoginRequest): Observable<UserProfile> {
@@ -24,10 +26,11 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<void> {
-    return this.http.post<void>(`${this.base}/logout`, {}, { withCredentials: true }).pipe(
-      tap(() => this._isAuthenticated$.next(false))
-    );
+  logout(): void {
+    this.http.post<void>(`${this.base}/logout`, {}, { withCredentials: true }).subscribe(() => {
+      this._isAuthenticated$.next(false);
+      this.router.navigateByUrl('/login');
+    });
   }
 
   profile(): Observable<UserProfile> {

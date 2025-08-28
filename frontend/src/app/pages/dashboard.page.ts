@@ -1,18 +1,18 @@
 import { Component, inject } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
+import { MaterialModule } from '../material.module';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [MatCardModule],
+  imports: [MaterialModule],
   template: `
-    <mat-card>
-      <h1>Dashboard</h1>
+    <div class="dashboard_content">
+      <div class="title2">Dashboard</div>
       <p>You're logged in.</p>
-    </mat-card>
+    </div>
   `,
-  styles: [`mat-card { max-width: 600px; margin: 32px auto; }`]
+  styleUrl: './pages.scss'
 })
 export class DashboardPage {
   auth = inject(AuthService);
