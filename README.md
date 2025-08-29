@@ -3,22 +3,29 @@
 Modern fullstack authentication boilerplate featuring:
 
 - Backend: Node.js, Express, Prisma (PostgreSQL), JWT access/refresh tokens, secure cookies, CORS, Helmet, rate limiting, validation
-- Frontend: Angular (standalone components), Angular Material, responsive UI, form validation, global loading bar, snackbars
+- Frontend: Angular (standalone components), Angular Material, ngx-lite-form for forms, responsive UI, form validation, snackbars
 
-This project gives you a clean starting point to build authenticated web apps quickly.
+This project provides a clean starting point for building authenticated web applications with a modern tech stack.
 
 ## Features
 
 - __JWT auth with refresh tokens__ using HTTP-only cookies
 - __Prisma ORM__ with PostgreSQL and a simple `User` model
 - __Security hardening__: Helmet, CORS, rate limiting, auth-only refresh, input validation
-- __Angular Material UI__: theming, toolbar, cards, form fields, snackbars, progress indicators
-- __Great UX__: real-time form validation, password visibility toggle, global loading indicator
+- __Modern UI__: Clean, responsive design with Angular Material and custom styling
+- __Form handling__: Simplified form management with ngx-lite-form
+- __Development proxy__: Pre-configured proxy for API requests in development
 
 ## Tech Stack
 
 - __Backend__: Express, Prisma, PostgreSQL, JSON Web Tokens
-- __Frontend__: Angular 17+, Angular Material (MDC), Standalone Components, RxJS
+- __Frontend__: 
+  - Angular 20.1.0 with Standalone Components
+  - Angular Material (MDC) 20.1.3
+  - ngx-lite-form 1.1.9 for form handling
+  - RxJS 7.8.0 for reactive programming
+  - TypeScript 5.8.0
+  - SCSS for styling
 
 ## Project Structure
 
@@ -113,17 +120,31 @@ Backend runs on `http://localhost:4000` by default.
 npm install
 ```
 
-2. Verify environment config
+2. Environment Configuration
 
-Make sure `src/environments/environment.development.ts` has `apiUrl` pointing to the backend (e.g. `http://localhost:4000`).
+- `src/environments/environment.development.ts` - Development settings
+- `src/environments/environment.ts` - Production settings
 
-3. Start the dev server
+3. Proxy Configuration
+
+A `proxy.conf.json` is included to route API requests to the backend during development:
+```json
+{
+  "/api": {
+    "target": "http://localhost:4000",
+    "secure": false,
+    "changeOrigin": true
+  }
+}
+```
+
+4. Start the development server
 
 ```bash
 npm start
 ```
 
-Frontend runs on Angular dev server (default `http://localhost:4200`). If you change the port, update backend `CORS_ORIGIN` to match.
+The frontend will be available at `http://localhost:4200` by default.
 
 ## Authentication Flow
 
@@ -133,16 +154,33 @@ Frontend runs on Angular dev server (default `http://localhost:4200`). If you ch
 
 ## API Endpoints (Backend)
 
-- `GET  /api/health` – health check
-- `POST /api/auth/register` – create a user, set tokens
-- `POST /api/auth/login` – authenticate, set tokens
-- `POST /api/auth/logout` – clear tokens
-- `POST /api/auth/refresh` – rotate/refresh access token
-- `GET  /api/auth/profile` – current user profile
+### Authentication
+- `POST /api/auth/register` – Register a new user
+  - Body: `{ email: string, password: string }`
+  - Password requirements: 8+ chars, 1+ lowercase, 1+ uppercase, 1+ number
+  - Returns: User profile and sets HTTP-only cookies
 
-Note: Non-prefixed aliases also exist under `/auth/*` for convenience.
+- `POST /api/auth/login` – Authenticate user
+  - Body: `{ email: string, password: string }`
+  - Returns: User profile and sets HTTP-only cookies
 
-All auth routes use cookies; ensure frontend requests set `withCredentials: true` (already configured).
+- `POST /api/auth/logout` – Invalidate tokens
+  - Requires authentication
+  - Clears HTTP-only cookies
+
+- `POST /api/auth/refresh` – Refresh access token
+  - Uses refresh token from cookies
+  - Returns new access token in cookies
+
+- `GET /api/auth/profile` – Get current user profile
+  - Requires authentication
+  - Returns: `{ id: string, email: string, name?: string }`
+
+### Health Check
+- `GET /api/health` – Basic health check endpoint
+
+> Note: All `/api/auth/*` endpoints have aliases under `/auth/*` for backward compatibility.
+> All auth responses set HTTP-only cookies for token management.
 
 ## Useful Scripts
 
@@ -163,9 +201,25 @@ Frontend (`frontend/package.json`):
 
 ## Troubleshooting
 
-- __CORS or cookie issues__: Ensure `CORS_ORIGIN` matches the exact frontend origin. Use the same protocol/host/port. Frontend requests must use `withCredentials` (already enabled).
-- __Port mismatch__: Backend uses `4000`. Angular default is `4200`. If you change frontend port, update backend `CORS_ORIGIN`.
-- __Database errors__: Verify `DATABASE_URL` and that migrations ran successfully.
+### CORS or Cookie Issues
+- Ensure `CORS_ORIGIN` in backend `.env` matches your frontend origin
+- Verify frontend requests include `withCredentials: true` (configured in `auth.service.ts`)
+- Check browser console for CORS errors and verify the proxy is working
+
+### Authentication
+- Ensure cookies are being sent with requests (check browser dev tools)
+- Verify token refresh is working by checking network requests
+- Check backend logs for authentication errors
+
+### Database
+- Verify `DATABASE_URL` in `.env` is correct
+- Run migrations with `npm run prisma:migrate`
+- Use `prisma studio` to inspect the database if needed
+
+### Development
+- If making changes to the proxy config, restart the Angular dev server
+- Clear browser cache if you encounter stale assets
+- Check browser console for runtime errors
 
 ## Security Notes
 

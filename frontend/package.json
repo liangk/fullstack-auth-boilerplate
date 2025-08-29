@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "start": "ng serve --configuration development --proxy-config proxy.conf.json",
@@ -9,26 +9,26 @@
     "lint": "ng lint"
   },
   "dependencies": {
-    "@angular/animations": "latest",
-    "@angular/cdk": "latest",
-    "@angular/common": "latest",
-    "@angular/compiler": "latest",
-    "@angular/core": "latest",
-    "@angular/forms": "latest",
-    "@angular/material": "latest",
-    "@angular/platform-browser": "latest",
-    "@angular/platform-browser-dynamic": "latest",
-    "@angular/router": "latest",
+    "@angular/animations": "^20.1.3",
+    "@angular/common": "^20.1.0",
+    "@angular/compiler": "^20.1.0",
+    "@angular/core": "^20.1.0",
+    "@angular/forms": "^20.1.0",
+    "@angular/platform-browser": "^20.1.0",
+    "@angular/router": "^20.1.0",
+    "@angular/cdk": "^20.1.3",
+    "@angular/material": "^20.1.3",
+    "@angular/platform-browser-dynamic": "^20.1.3",
     "ngx-lite-form": "^1.1.9",
-    "rxjs": "latest",
-    "tslib": "latest",
-    "zone.js": "latest"
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "latest",
-    "@angular/cli": "latest",
-    "@angular/compiler-cli": "latest",
-    "sass": "latest",
-    "typescript": "latest"
+    "@angular-devkit/build-angular": "^20.1.3",
+    "@angular/cli": "^20.1.3",
+    "@angular/compiler-cli": "^20.1.3",
+    "sass": "^1.77.0",
+    "typescript": "~5.8.0"
   }
 }
