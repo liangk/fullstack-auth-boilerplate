@@ -18,7 +18,10 @@ import { LiteSnackbarService } from 'ngx-lite-form';
         <lite-password [control]="password"></lite-password>
         <div class="actions">
           <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || loading">Login</button>
-          <a routerLink="/register">Register</a>
+          <div class="links">
+            <a routerLink="/forgot-password">Forgot password?</a>
+            <a routerLink="/register">Register</a>
+          </div>
         </div>
       </form>
     </div>

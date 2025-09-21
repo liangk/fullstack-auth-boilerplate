@@ -18,6 +18,8 @@ export async function sendPasswordResetEmail(to: string, token: string) {
     from: '"Auth Boilerplate" <noreply@example.com>',
     to,
     subject: "Password Reset Request",
-    html: `<p>Click <a href="${url}">here</a> to reset your password.</p>`
+    html: `<p>You requested a password reset. Click <a href="${url}">here</a> to reset your password.</p>
+           <p>This link will expire in 1 hour.</p>
+           <p>If you didn't request this, please ignore this email.</p>`
   });
 }

@@ -4,13 +4,7 @@
 }
 .login_content, .register_content { padding: 30px; display: flex; flex-direction: column; margin: auto; padding: 20px; width: 480px; background: #fff; border-radius: 10px; flex: 0;
   .title2 { font-size: 24px; font-weight: 500; margin-bottom: 16px; text-align: center; }
-  form { margin: auto; width: 320px; display: flex; flex-direction: column; gap: 10px;
-    lite-input, lite-password {
-      // ::ng-deep {
-      //   input { height: 40px !important; }
-      //   .label { line-height: 40px !important; }
-      // }
-    }
-  }
+  form { margin: auto; width: 320px; display: flex; flex-direction: column; gap: 10px; }
   .actions { display: flex; align-items: center; justify-content: center; gap: 10px; }
+  .links { display: flex; flex-direction: column; gap: 5px; font-size: 14px; }
 }

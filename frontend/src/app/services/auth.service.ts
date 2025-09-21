@@ -43,6 +43,14 @@ export class AuthService {
     return this.http.get<{ message: string }>(`${this.base}/verify-email?token=${encodeURIComponent(token)}`, { withCredentials: true });
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.base}/forgot-password`, { email }, { withCredentials: true });
+  }
+
+  resetPassword(token: string, password: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.base}/reset-password`, { token, password }, { withCredentials: true });
+  }
+
   refresh(): Observable<void> {
     return this.http.post<void>(`${this.base}/refresh`, {}, { withCredentials: true }).pipe(
       tap(() => this._isAuthenticated$.next(true))

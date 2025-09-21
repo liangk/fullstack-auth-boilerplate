@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { createUser, getUserById, validateUser } from '../services/authService';
-import { signAccessToken, signRefreshToken, signEmailVerificationToken, verifyRefreshToken, verifyEmailVerificationToken } from '../utils/jwt';
+import { signAccessToken, signRefreshToken, signEmailVerificationToken, verifyRefreshToken, verifyEmailVerificationToken, signPasswordResetToken, verifyPasswordResetToken } from '../utils/jwt';
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, IS_PROD, SKIP_EMAIL_VERIFICATION } from '../utils/constants';
 import { prisma } from '../prisma';
-import { sendVerificationEmail } from '../services/mailService';
+import { sendVerificationEmail, sendPasswordResetEmail } from '../services/mailService';
 
 function setAccessCookie(res: Response, token: string) {
   res.cookie(ACCESS_TOKEN_COOKIE, token, {
@@ -161,6 +161,57 @@ export async function resendVerificationEmail(req: Request, res: Response, next:
     await sendVerificationEmail(email, verificationToken);
 
     res.json({ message: 'Verification email sent successfully' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function resetPassword(req: Request, res: Response, next: any) {
+  try {
+    const { token, password } = req.body as { token: string; password: string };
+    if (!token || !password) return res.status(400).json({ message: 'Token and password are required' });
+
+    const payload = verifyPasswordResetToken(token);
+    const user = await prisma.user.findUnique({ where: { id: payload.sub } });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Hash the new password
+    const bcrypt = require('bcrypt');
+    const passwordHash = await bcrypt.hash(password, 12);
+
+    // Update password and increment token version to invalidate all existing tokens
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { 
+        password: passwordHash,
+        tokenVersion: { increment: 1 }
+      }
+    });
+
+    res.json({ message: 'Password reset successfully' });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'Invalid token type') {
+      return res.status(400).json({ message: 'Invalid reset token' });
+    }
+    next(err);
+  }
+}
+
+export async function forgotPassword(req: Request, res: Response, next: any) {
+  try {
+    const { email } = req.body as { email: string };
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      // Don't reveal if email exists or not for security
+      return res.json({ message: 'If an account with this email exists, a password reset link has been sent.' });
+    }
+
+    const resetToken = signPasswordResetToken(user.id);
+    await sendPasswordResetEmail(email, resetToken);
+
+    res.json({ message: 'If an account with this email exists, a password reset link has been sent.' });
   } catch (err) {
     next(err);
   }
