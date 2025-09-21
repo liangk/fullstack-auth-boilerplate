@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { createUser, getUserById, validateUser } from '../services/authService';
 import { signAccessToken, signRefreshToken, signEmailVerificationToken, verifyRefreshToken, verifyEmailVerificationToken } from '../utils/jwt';
-import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, IS_PROD } from '../utils/constants';
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, IS_PROD, SKIP_EMAIL_VERIFICATION } from '../utils/constants';
 import { prisma } from '../prisma';
 import { sendVerificationEmail } from '../services/mailService';
 
@@ -30,13 +30,24 @@ export async function register(req: Request, res: Response, next: any) {
     const { email, password, name } = req.body as { email: string; password: string; name?: string };
     const user = await createUser(email, password, name);
     
-    // Send verification email
-    const verificationToken = signEmailVerificationToken(user.id);
-    await sendVerificationEmail(email, verificationToken);
+    if (!SKIP_EMAIL_VERIFICATION) {
+      // Send verification email
+      const verificationToken = signEmailVerificationToken(user.id);
+      await sendVerificationEmail(email, verificationToken);
+    } else {
+      // Mark email as verified if skipping verification
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { emailVerified: true }
+      });
+    }
     
     res.status(201).json({ 
-      message: 'User created successfully. Please check your email to verify your account.',
-      user: { id: user.id, email: user.email, name: user.name, emailVerified: false }
+      message: SKIP_EMAIL_VERIFICATION 
+        ? 'User created successfully.' 
+        : 'User created successfully. Please check your email to verify your account.',
+      user: { id: user.id, email: user.email, name: user.name, emailVerified: SKIP_EMAIL_VERIFICATION },
+      requiresVerification: !SKIP_EMAIL_VERIFICATION
     });
   } catch (err) {
     next(err);
@@ -49,10 +60,11 @@ export async function login(req: Request, res: Response, next: any) {
     const user = await validateUser(email, password);
     if (!user) return res.status(401).json({ message: 'Invalid email or password' });
     
-    // Check if email is verified
     const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
     if (!dbUser) return res.status(500).json({ message: 'User not found' });
-    if (!dbUser.emailVerified) {
+    
+    // Check if email is verified (skip if flag is true)
+    if (!SKIP_EMAIL_VERIFICATION && !dbUser.emailVerified) {
       return res.status(403).json({ 
         message: 'Please verify your email before logging in',
         requiresVerification: true 
@@ -132,6 +144,24 @@ export async function verifyEmail(req: Request, res: Response, next: any) {
     if (err instanceof Error && err.message === 'Invalid token type') {
       return res.status(400).json({ message: 'Invalid verification token' });
     }
+    next(err);
+  }
+}
+
+export async function resendVerificationEmail(req: Request, res: Response, next: any) {
+  try {
+    const { email } = req.body as { email: string };
+    if (!email) return res.status(400).json({ message: 'Email is required' });
+
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.emailVerified) return res.status(400).json({ message: 'Email already verified' });
+
+    const verificationToken = signEmailVerificationToken(user.id);
+    await sendVerificationEmail(email, verificationToken);
+
+    res.json({ message: 'Verification email sent successfully' });
+  } catch (err) {
     next(err);
   }
 }

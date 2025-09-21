@@ -15,3 +15,14 @@ export interface UserProfile {
   name: string | null;
   createdAt: string;
 }
+
+export interface RegisterResponse {
+  message: string;
+  user: {
+    id: string;
+    email: string;
+    name: string | null;
+    emailVerified: boolean;
+  };
+  requiresVerification: boolean;
+}

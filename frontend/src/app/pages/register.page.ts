@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { MaterialModule } from '../material.module';
 import { FieldDto } from 'ngx-lite-form';
 import { LiteSnackbarService } from 'ngx-lite-form';
+import { RegisterResponse } from '../models/auth';
 
 @Component({
   selector: 'app-register',
@@ -44,9 +45,17 @@ export class RegisterPage {
     if (this.form.invalid) return;
     this.loading = true;
     this.auth.register(this.form.value as any).subscribe({
-      next: () => {
-        this.snack.show('Account created', 'done', 2500);
-        this.router.navigateByUrl('/');
+      next: (response: RegisterResponse) => {
+        this.snack.show(response.message, 'done', 2500);
+        if (response.requiresVerification) {
+          // Redirect to pending verification page with email as query param
+          this.router.navigate(['/pending-verification'], { 
+            queryParams: { email: this.form.value.email } 
+          });
+        } else {
+          // Skip verification, go to dashboard
+          this.router.navigateByUrl('/');
+        }
       },
       error: (e) => {
         const msg = e?.error?.message || 'Registration failed';

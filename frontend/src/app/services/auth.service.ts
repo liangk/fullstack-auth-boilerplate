@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { LoginRequest, RegisterRequest, UserProfile } from '../models/auth';
+import { LoginRequest, RegisterRequest, UserProfile, RegisterResponse } from '../models/auth';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
@@ -20,10 +20,8 @@ export class AuthService {
     );
   }
 
-  register(data: RegisterRequest): Observable<UserProfile> {
-    return this.http.post<UserProfile>(`${this.base}/register`, data, { withCredentials: true }).pipe(
-      tap(() => this._isAuthenticated$.next(true))
-    );
+  register(data: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.base}/register`, data, { withCredentials: true });
   }
 
   logout(): void {
@@ -35,6 +33,14 @@ export class AuthService {
 
   profile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.base}/profile`, { withCredentials: true });
+  }
+
+  resendVerification(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${this.base}/resend-verification`, { email }, { withCredentials: true });
+  }
+
+  verifyEmail(token: string): Observable<{ message: string }> {
+    return this.http.get<{ message: string }>(`${this.base}/verify-email?token=${encodeURIComponent(token)}`, { withCredentials: true });
   }
 
   refresh(): Observable<void> {
