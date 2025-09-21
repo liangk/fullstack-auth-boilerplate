@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
 import { createUser, getUserById, validateUser } from '../services/authService';
-import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../utils/jwt';
+import { signAccessToken, signRefreshToken, signEmailVerificationToken, verifyRefreshToken, verifyEmailVerificationToken } from '../utils/jwt';
 import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE, IS_PROD } from '../utils/constants';
 import { prisma } from '../prisma';
+import { sendVerificationEmail } from '../services/mailService';
 
 function setAccessCookie(res: Response, token: string) {
   res.cookie(ACCESS_TOKEN_COOKIE, token, {
@@ -28,13 +29,15 @@ export async function register(req: Request, res: Response, next: any) {
   try {
     const { email, password, name } = req.body as { email: string; password: string; name?: string };
     const user = await createUser(email, password, name);
-    const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
-    if (!dbUser) return res.status(500).json({ message: 'User creation inconsistent' });
-    const access = signAccessToken(user.id);
-    const refresh = signRefreshToken(user.id, dbUser.tokenVersion);
-    setAccessCookie(res, access);
-    setRefreshCookie(res, refresh);
-    res.status(201).json({ user });
+    
+    // Send verification email
+    const verificationToken = signEmailVerificationToken(user.id);
+    await sendVerificationEmail(email, verificationToken);
+    
+    res.status(201).json({ 
+      message: 'User created successfully. Please check your email to verify your account.',
+      user: { id: user.id, email: user.email, name: user.name, emailVerified: false }
+    });
   } catch (err) {
     next(err);
   }
@@ -45,13 +48,22 @@ export async function login(req: Request, res: Response, next: any) {
     const { email, password } = req.body as { email: string; password: string };
     const user = await validateUser(email, password);
     if (!user) return res.status(401).json({ message: 'Invalid email or password' });
+    
+    // Check if email is verified
     const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
     if (!dbUser) return res.status(500).json({ message: 'User not found' });
+    if (!dbUser.emailVerified) {
+      return res.status(403).json({ 
+        message: 'Please verify your email before logging in',
+        requiresVerification: true 
+      });
+    }
+    
     const access = signAccessToken(user.id);
     const refresh = signRefreshToken(user.id, dbUser.tokenVersion);
     setAccessCookie(res, access);
     setRefreshCookie(res, refresh);
-    res.json({ user });
+    res.json({ user: { id: user.id, email: user.email, name: user.name, emailVerified: dbUser.emailVerified } });
   } catch (err) {
     next(err);
   }
@@ -94,6 +106,32 @@ export async function refresh(req: Request, res: Response, next: any) {
     setAccessCookie(res, access);
     res.json({ message: 'refreshed' });
   } catch (err) {
+    next(err);
+  }
+}
+
+export async function verifyEmail(req: Request, res: Response, next: any) {
+  try {
+    const { token } = req.query as { token: string };
+    if (!token) return res.status(400).json({ message: 'Verification token is required' });
+
+    const payload = verifyEmailVerificationToken(token);
+    const user = await prisma.user.findUnique({ where: { id: payload.sub } });
+    
+    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (user.emailVerified) return res.status(400).json({ message: 'Email already verified' });
+
+    // Mark email as verified
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { emailVerified: true }
+    });
+
+    res.json({ message: 'Email verified successfully' });
+  } catch (err) {
+    if (err instanceof Error && err.message === 'Invalid token type') {
+      return res.status(400).json({ message: 'Invalid verification token' });
+    }
     next(err);
   }
 }
