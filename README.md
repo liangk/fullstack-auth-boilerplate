@@ -149,6 +149,105 @@ npm start
 
 The frontend will be available at `http://localhost:4200` by default.
 
+## Docker Setup (Recommended for Development)
+
+This project includes a complete Docker Compose setup with PostgreSQL, MailDev, backend, and frontend services.
+
+### Prerequisites
+
+- Docker Desktop installed and running
+- Docker Compose (included with Docker Desktop)
+
+### Quick Start with Docker
+
+1. **Clone the repository** (if not already done)
+
+2. **Start all services:**
+```bash
+docker-compose up --build
+```
+Or use the helper script:
+```bash
+./docker-dev.sh start
+```
+
+3. **Access the application:**
+   - **Frontend:** http://localhost:3000
+   - **Backend API:** http://localhost:4000
+   - **MailDev (Email Testing):** http://localhost:1080
+   - **PostgreSQL:** localhost:5432
+
+### Docker Services
+
+- **PostgreSQL**: Database server with persistent data volume
+- **MailDev**: Email testing server (captures all emails sent by the app)
+- **Backend**: Node.js/Express API server with hot reload
+- **Frontend**: Angular SPA served by Nginx with API proxy
+
+### Useful Docker Commands
+
+```bash
+# Quick commands using helper script
+./docker-dev.sh start      # Start all services
+./docker-dev.sh start-bg   # Start in background
+./docker-dev.sh stop       # Stop all services
+./docker-dev.sh restart    # Restart all services
+./docker-dev.sh logs       # View logs
+./docker-dev.sh migrate    # Run migrations
+./docker-dev.sh seed       # Seed database
+./docker-dev.sh studio     # Open Prisma Studio
+./docker-dev.sh clean      # Clean up everything
+
+# Or use docker-compose directly
+# Start services in background
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+
+# Rebuild and restart
+docker-compose up --build --force-recreate
+
+# Clean up (removes volumes too)
+docker-compose down -v
+
+# Run database migrations in container
+docker-compose exec backend npm run prisma:migrate
+
+# Access database directly
+docker-compose exec postgres psql -U postgres -d auth_boilerplate
+
+# View MailDev emails
+open http://localhost:1080
+```
+
+### Environment Configuration
+
+The Docker setup includes pre-configured environment variables for development:
+
+- **Database:** `postgresql://postgres:password@postgres:5432/auth_boilerplate`
+- **JWT Secrets:** Development secrets (replace in production)
+- **Email:** Uses MailDev instead of real SMTP
+- **CORS:** Configured for `http://localhost:3000`
+
+### Development Workflow with Docker
+
+1. **Make code changes** - Files are volume-mounted, so changes are reflected immediately
+2. **Backend hot reload** - Uses `ts-node-dev` for automatic restarts
+3. **Frontend hot reload** - Angular dev server with proxy to backend
+4. **Database persistence** - Data survives container restarts
+
+### Production Deployment
+
+For production, create a `docker-compose.prod.yml` with:
+- Environment-specific secrets
+- Production database URL
+- Real SMTP configuration
+- SSL/TLS certificates
+
 ## Authentication Flow
 
 - Login/Register set auth cookies via `withCredentials: true` requests
