@@ -297,10 +297,11 @@ export async function updateProfile(req: Request, res: Response, next: any) {
       where: { id: userId },
       data: {
         ...(name !== undefined && { name }),
-        ...(email && email !== existingUser.email && {
-          email,
-          emailVerified: false // Reset email verification if email changed
-        }),
+        ...(email &&
+          email !== existingUser.email && {
+            email,
+            emailVerified: false, // Reset email verification if email changed
+          }),
       },
       select: { id: true, email: true, name: true, emailVerified: true },
     });
@@ -312,9 +313,10 @@ export async function updateProfile(req: Request, res: Response, next: any) {
     }
 
     res.json({
-      message: email && email !== existingUser.email && !SKIP_EMAIL_VERIFICATION
-        ? 'Profile updated successfully. Please verify your new email address.'
-        : 'Profile updated successfully.',
+      message:
+        email && email !== existingUser.email && !SKIP_EMAIL_VERIFICATION
+          ? 'Profile updated successfully. Please verify your new email address.'
+          : 'Profile updated successfully.',
       ...updatedUser,
       requiresVerification: email && email !== existingUser.email && !SKIP_EMAIL_VERIFICATION,
     });
