@@ -14,7 +14,13 @@
     "prisma:seed": "prisma db seed",
     "prisma:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force",
-    "lint": "echo \"No linter configured\""
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "format": "prettier --write src/**/*.ts",
+    "format:check": "prettier --check src/**/*.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"
@@ -39,10 +45,18 @@
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/jest": "^29.5.0",
     "@types/jsonwebtoken": "^9.0.5",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.14.9",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.32.0",
+    "eslint-config-prettier": "^8.6.0",
+    "jest": "^29.5.0",
+    "prettier": "^2.8.4",
     "prisma": "^5.22.0",
+    "ts-jest": "^29.1.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.5.3"

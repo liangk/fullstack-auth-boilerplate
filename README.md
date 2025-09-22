@@ -216,6 +216,53 @@ The frontend will be available at `http://localhost:4200` by default.
 > Note: All `/api/auth/*` endpoints have aliases under `/auth/*` for backward compatibility.
 > All auth responses set HTTP-only cookies for token management.
 
+## CI/CD Pipeline
+
+### Backend CI/CD
+
+The backend includes a comprehensive CI/CD pipeline using GitHub Actions that runs on every push and pull request to `main` and `develop` branches.
+
+**What it does:**
+- ✅ **Code Quality**: ESLint for TypeScript linting
+- ✅ **Code Formatting**: Prettier for consistent code style
+- ✅ **Testing**: Jest for unit testing with coverage reports
+- ✅ **Database**: Prisma client generation
+- ✅ **Coverage Reports**: Upload coverage to Codecov
+
+**Setup Requirements:**
+
+1. **Install Dependencies** (one-time setup):
+```bash
+cd backend
+npm install
+```
+
+2. **Add Repository Secrets** (in GitHub Settings → Secrets and variables → Actions):
+   - `TEST_DATABASE_URL`: PostgreSQL connection string for test database
+
+3. **Local Development Commands**:
+```bash
+# Linting
+npm run lint          # Check for linting errors
+npm run lint:fix      # Auto-fix linting errors
+
+# Code formatting
+npm run format        # Format code with Prettier
+npm run format:check  # Check if code is formatted
+
+# Testing
+npm run test          # Run all tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+```
+
+**Workflow File**: `.github/workflows/backend-ci.yml`
+
+The pipeline will automatically:
+- Run on pushes to `main`/`develop` branches
+- Run on pull requests targeting `main`/`develop` branches
+- Only trigger when backend files are changed (`backend/**`)
+
 ## Useful Scripts
 
 Backend (`backend/package.json`):
