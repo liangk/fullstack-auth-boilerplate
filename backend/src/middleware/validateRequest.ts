@@ -7,7 +7,7 @@ export function validateRequest(req: Request, res: Response, next: NextFunction)
 
   return res.status(400).json({
     message: 'Validation failed',
-    errors: errors.array().map(e => {
+    errors: errors.array().map((e) => {
       if (e.type === 'field') {
         return { field: e.path, message: e.msg };
       }

@@ -9,8 +9,12 @@ export const mailer = nodemailer.createTransport({
   port: useMailDev ? 1025 : parseInt(process.env.SMTP_PORT || '587'),
   secure: !useMailDev && process.env.SMTP_PORT === '465', // true for 465, false for other ports
   ignoreTLS: useMailDev, // MailDev doesn't use TLS
-  auth: useMailDev ? undefined : (process.env.SMTP_USER ? {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  } : undefined),
+  auth: useMailDev
+    ? undefined
+    : process.env.SMTP_USER
+    ? {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+      }
+    : undefined,
 });

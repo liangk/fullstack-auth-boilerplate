@@ -10,6 +10,8 @@ This project provides a clean starting point for building authenticated web appl
 ## Features
 
 - __JWT auth with refresh tokens__ using HTTP-only cookies
+- __Email verification__ for account activation with secure JWT tokens
+- __Password reset flow__ with secure reset links and session invalidation
 - __Prisma ORM__ with PostgreSQL and a simple `User` model
 - __Security hardening__: Helmet, CORS, rate limiting, auth-only refresh, input validation
 - __Modern UI__: Clean, responsive design with Angular Material and custom styling
@@ -92,8 +94,9 @@ copy .env.example .env
 Update `.env`:
 
 - `DATABASE_URL` points to your PostgreSQL instance
-- `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` are strong random strings
+- `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `JWT_EMAIL_SECRET`, and `JWT_PASSWORD_RESET_SECRET` are strong random strings
 - `CORS_ORIGIN` must match the frontend URL (default Angular dev server is `http://localhost:4200`)
+- `SKIP_EMAIL_VERIFICATION` set to `true` for development or `false` for production
 
 3. Initialize database
 
@@ -152,17 +155,32 @@ The frontend will be available at `http://localhost:4200` by default.
 - Protected calls return 401 -> interceptor attempts `/auth/refresh`
 - Logout clears cookies; `isAuthenticated$` updates in the `AuthService`
 
+### Email Verification Flow
+
+1. User registers → Email sent with verification link (if `SKIP_EMAIL_VERIFICATION=false`)
+2. User clicks link → Account activated, can now login
+3. Login blocked until email verified (if email verification required)
+
+### Password Reset Flow
+
+1. User clicks "Forgot password?" → Enters email on reset page
+2. System sends password reset email with secure token link
+3. User clicks link → Redirected to password reset form
+4. User sets new password → All existing sessions invalidated
+5. User can login with new password
+
 ## API Endpoints (Backend)
 
 ### Authentication
 - `POST /api/auth/register` – Register a new user
-  - Body: `{ email: string, password: string }`
+  - Body: `{ email: string, password: string, name?: string }`
   - Password requirements: 8+ chars, 1+ lowercase, 1+ uppercase, 1+ number
   - Returns: User profile and sets HTTP-only cookies
+  - If `SKIP_EMAIL_VERIFICATION=false`, sends verification email and returns `requiresVerification: true`
 
 - `POST /api/auth/login` – Authenticate user
   - Body: `{ email: string, password: string }`
-  - Returns: User profile and sets HTTP-only cookies
+  - Returns: User profile and sets HTTP-only cookies (if email verified)
 
 - `POST /api/auth/logout` – Invalidate tokens
   - Requires authentication
@@ -174,13 +192,76 @@ The frontend will be available at `http://localhost:4200` by default.
 
 - `GET /api/auth/profile` – Get current user profile
   - Requires authentication
-  - Returns: `{ id: string, email: string, name?: string }`
+  - Returns: `{ id: string, email: string, name?: string, emailVerified: boolean }`
+
+- `GET /api/auth/verify-email` – Verify email address
+  - Query param: `token` (JWT verification token)
+  - Activates user account for login
+
+- `POST /api/auth/resend-verification` – Resend verification email
+  - Body: `{ email: string }`
+  - Sends new verification email if account exists and isn't verified
+
+- `POST /api/auth/forgot-password` – Request password reset
+  - Body: `{ email: string }`
+  - Sends password reset email (if account exists)
+
+- `POST /api/auth/reset-password` – Reset password with token
+  - Body: `{ token: string, password: string }`
+  - Updates password and invalidates all existing sessions
 
 ### Health Check
 - `GET /api/health` – Basic health check endpoint
 
 > Note: All `/api/auth/*` endpoints have aliases under `/auth/*` for backward compatibility.
 > All auth responses set HTTP-only cookies for token management.
+
+## CI/CD Pipeline
+
+### Backend CI/CD
+
+The backend includes a comprehensive CI/CD pipeline using GitHub Actions that runs on every push and pull request to `main` and `develop` branches.
+
+**What it does:**
+- ✅ **Code Quality**: ESLint for TypeScript linting
+- ✅ **Code Formatting**: Prettier for consistent code style
+- ✅ **Testing**: Jest for unit testing with coverage reports
+- ✅ **Database**: Prisma client generation
+- ✅ **Coverage Reports**: Upload coverage to Codecov
+
+**Setup Requirements:**
+
+1. **Install Dependencies** (one-time setup):
+```bash
+cd backend
+npm install
+```
+
+2. **Add Repository Secrets** (in GitHub Settings → Secrets and variables → Actions):
+   - `TEST_DATABASE_URL`: PostgreSQL connection string for test database
+
+3. **Local Development Commands**:
+```bash
+# Linting
+npm run lint          # Check for linting errors
+npm run lint:fix      # Auto-fix linting errors
+
+# Code formatting
+npm run format        # Format code with Prettier
+npm run format:check  # Check if code is formatted
+
+# Testing
+npm run test          # Run all tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+```
+
+**Workflow File**: `.github/workflows/backend-ci.yml`
+
+The pipeline will automatically:
+- Run on pushes to `main`/`develop` branches
+- Run on pull requests targeting `main`/`develop` branches
+- Only trigger when backend files are changed (`backend/**`)
 
 ## Useful Scripts
 
@@ -223,9 +304,12 @@ Frontend (`frontend/package.json`):
 
 ## Security Notes
 
-- Use strong JWT secrets and rotate them periodically.
+- Use strong JWT secrets (`JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `JWT_EMAIL_SECRET`, `JWT_PASSWORD_RESET_SECRET`) and rotate them periodically.
 - Set production cookie flags appropriately (e.g., `Secure`, `SameSite` per deployment topology).
 - Rate limits are included for both general and auth-specific routes (see `.env.example`).
+- Email verification prevents unauthorized account access.
+- Password reset tokens expire quickly (1 hour) and invalidate all existing sessions upon use.
+- Password reset responses don't reveal account existence for security.
 
 ## License
 
