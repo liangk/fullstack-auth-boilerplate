@@ -1,6 +1,16 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { login, register, logout, refresh, profile, verifyEmail, resendVerificationEmail, forgotPassword, resetPassword } from '../controllers/authController';
+import {
+  login,
+  register,
+  logout,
+  refresh,
+  profile,
+  verifyEmail,
+  resendVerificationEmail,
+  forgotPassword,
+  resetPassword,
+} from '../controllers/authController';
 import { validateRequest } from '../middleware/validateRequest';
 import { requireAuth } from '../middleware/requireAuth';
 import { authRateLimiter } from '../middleware/authRateLimiter';
@@ -13,7 +23,13 @@ router.post(
   [
     body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
     body('password')
-      .isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 0 })
+      .isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+      })
       .withMessage('Password must be at least 8 chars, include upper, lower, number'),
     body('name').optional().isString().trim().escape().isLength({ max: 100 }),
   ],
@@ -39,9 +55,7 @@ router.get('/verify-email', verifyEmail);
 router.post(
   '/resend-verification',
   authRateLimiter,
-  [
-    body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
-  ],
+  [body('email').isEmail().withMessage('Valid email required').normalizeEmail()],
   validateRequest,
   resendVerificationEmail
 );
@@ -49,9 +63,7 @@ router.post(
 router.post(
   '/forgot-password',
   authRateLimiter,
-  [
-    body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
-  ],
+  [body('email').isEmail().withMessage('Valid email required').normalizeEmail()],
   validateRequest,
   forgotPassword
 );
@@ -61,7 +73,13 @@ router.post(
   authRateLimiter,
   [
     body('password')
-      .isStrongPassword({ minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 0 })
+      .isStrongPassword({
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+      })
       .withMessage('Password must be at least 8 chars, include upper, lower, number'),
   ],
   validateRequest,
