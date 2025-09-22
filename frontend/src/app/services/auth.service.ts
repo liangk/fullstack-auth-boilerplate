@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, of, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { LoginRequest, RegisterRequest, UserProfile, RegisterResponse } from '../models/auth';
+import { LoginRequest, RegisterRequest, UserProfile, RegisterResponse, ChangePasswordRequest, ChangePasswordResponse } from '../models/auth';
 import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
@@ -33,6 +33,14 @@ export class AuthService {
 
   profile(): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.base}/profile`, { withCredentials: true });
+  }
+
+  updateProfile(data: any): Observable<any> {
+    return this.http.put<any>(`${this.base}/profile`, data, { withCredentials: true });
+  }
+
+  changePassword(data: ChangePasswordRequest): Observable<ChangePasswordResponse> {
+    return this.http.put<ChangePasswordResponse>(`${this.base}/change-password`, data, { withCredentials: true });
   }
 
   resendVerification(email: string): Observable<{ message: string }> {

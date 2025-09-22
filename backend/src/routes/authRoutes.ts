@@ -6,6 +6,8 @@ import {
   logout,
   refresh,
   profile,
+  updateProfile,
+  changePassword,
   verifyEmail,
   resendVerificationEmail,
   forgotPassword,
@@ -91,5 +93,36 @@ router.post('/logout', requireAuth, logout);
 router.get('/profile', requireAuth, profile);
 // Back-compat alias
 router.get('/me', requireAuth, profile);
+
+router.put(
+  '/profile',
+  requireAuth,
+  [
+    body('name').optional().isString().trim().escape().isLength({ max: 100 }),
+    body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
+  ],
+  validateRequest,
+  updateProfile
+);
+
+router.put(
+  '/change-password',
+  requireAuth,
+  authRateLimiter,
+  [
+    body('currentPassword').isString().notEmpty().withMessage('Current password is required'),
+    body('newPassword')
+      .isStrongPassword({
+        minLength: 6,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 0,
+      })
+      .withMessage('New password must be at least 6 chars, include upper, lower, number'),
+  ],
+  validateRequest,
+  changePassword
+);
 
 export default router;
