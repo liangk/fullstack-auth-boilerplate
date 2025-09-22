@@ -1,4 +1,5 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcrypt';
 import { createUser, getUserById, validateUser } from '../services/authService';
 import {
   signAccessToken,
@@ -270,7 +271,82 @@ export async function profile(req: Request, res: Response, next: any) {
     const userId = req.userId!;
     const user = await getUserById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
-    res.json({ user });
+    res.json(user);
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function updateProfile(req: Request, res: Response, next: any) {
+  try {
+    const userId = req.userId!;
+    const { name, email } = req.body as { name?: string; email?: string };
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({ where: { id: userId } });
+    if (!existingUser) return res.status(404).json({ message: 'User not found' });
+
+    // Check if email is being changed and if it's already taken
+    if (email && email !== existingUser.email) {
+      const emailTaken = await prisma.user.findUnique({ where: { email } });
+      if (emailTaken) return res.status(409).json({ message: 'Email is already taken' });
+    }
+
+    // Update user profile
+    const updatedUser = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(email && email !== existingUser.email && {
+          email,
+          emailVerified: false // Reset email verification if email changed
+        }),
+      },
+      select: { id: true, email: true, name: true, emailVerified: true },
+    });
+
+    // If email was changed, send verification email
+    if (email && email !== existingUser.email && !SKIP_EMAIL_VERIFICATION) {
+      const verificationToken = signEmailVerificationToken(userId);
+      await sendVerificationEmail(email, verificationToken);
+    }
+
+    res.json({
+      message: email && email !== existingUser.email && !SKIP_EMAIL_VERIFICATION
+        ? 'Profile updated successfully. Please verify your new email address.'
+        : 'Profile updated successfully.',
+      ...updatedUser,
+      requiresVerification: email && email !== existingUser.email && !SKIP_EMAIL_VERIFICATION,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function changePassword(req: Request, res: Response, next: NextFunction) {
+  try {
+    const userId = req.userId!;
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await getUserById(userId, true);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Verify current password
+    const isValidPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!isValidPassword) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // Update password
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    res.json({ message: 'Password changed successfully' });
   } catch (err) {
     next(err);
   }

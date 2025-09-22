@@ -23,10 +23,16 @@ export async function validateUser(email: string, password: string) {
   return { id: user.id, email: user.email, name: user.name, createdAt: user.createdAt };
 }
 
-export async function getUserById(id: string) {
+export async function getUserById(id: string, includePassword = false) {
   return prisma.user.findUnique({
     where: { id },
-    select: { id: true, email: true, name: true, createdAt: true },
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      createdAt: true,
+      ...(includePassword && { password: true }),
+    },
   });
 }
 

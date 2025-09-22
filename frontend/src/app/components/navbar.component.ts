@@ -13,7 +13,10 @@ import { AuthService } from '../services/auth.service';
     <header>
       <div class="home" routerLink="/">Home</div>
       @if (auth.isAuthenticated$ | async) {
-        <button mat-raised-button color="accent" (click)="logout()">Logout</button>
+        <div class="actions">
+          <button mat-button routerLink="/profile">Profile</button>
+          <button mat-raised-button color="accent" (click)="logout()">Logout</button>
+        </div>
       } @else {
         <div class="actions">
           <button mat-raised-button color="accent" routerLink="/login">Login</button>
