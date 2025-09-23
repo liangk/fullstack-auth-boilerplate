@@ -3,13 +3,12 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MaterialModule } from '../material.module';
-import { FieldDto } from 'ngx-lite-form';
-import { LiteSnackbarService } from 'ngx-lite-form';
+import { FieldDto, LiteSnackbarService, LitePassword } from 'ngx-lite-form';
 
 @Component({
   selector: 'app-reset-password',
   standalone: true,
-  imports: [ReactiveFormsModule, MaterialModule, RouterLink],
+  imports: [ReactiveFormsModule, MaterialModule, RouterLink, LitePassword],
   template: `
     <div class="register_content">
       <div class="title2">Reset Password</div>

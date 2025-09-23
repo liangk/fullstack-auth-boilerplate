@@ -5,16 +5,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { UserProfile } from '../models/auth';
 import { MaterialModule } from '../material.module';
-import { FieldDto, LiteSnackbarService } from 'ngx-lite-form';
+import { FieldDto, LiteSnackbarService, LiteInput } from 'ngx-lite-form';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MaterialModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule, LiteInput],
   template: `
     <div class="profile_content">
     <div class="title2">Profile</div>
