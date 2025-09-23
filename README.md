@@ -183,6 +183,106 @@ Tips
                                                       +-----------+
 ```
 
+## Security Checklist
+
+This boilerplate includes industry-standard security practices:
+
+### ✅ Authentication Security
+- **JWT Tokens**: Access/refresh tokens stored in HTTP-only cookies
+- **Token Rotation**: Refresh tokens invalidated after use
+- **Short-Lived Access Tokens**: 15-minute expiration (configurable)
+- **Bcrypt Password Hashing**: 10 rounds of salting
+- **Session Invalidation**: All sessions terminated on password reset
+
+### ✅ API Protection
+- **Rate Limiting**:
+  - Global: 100 requests/15 minutes
+  - Auth endpoints: 5 requests/minute
+- **Helmet Middleware**: Security headers (XSS, HSTS, CSP)
+- **CORS**: Strict origin validation (`CORS_ORIGIN`)
+- **Input Validation**: All endpoints validated with express-validator
+
+### ✅ Cookie Security
+```yaml
+# Development
+access_token: HttpOnly, SameSite=Lax
+refresh_token: HttpOnly, SameSite=Lax
+
+# Production (add to .env)
+COOKIE_SECURE=true  # Requires HTTPS
+COOKIE_SAMESITE=Strict
+```
+
+### 🔐 CSRF Protection
+- Not needed when using:
+  - HTTP-only cookies
+  - SameSite=Lax/Strict
+  - CORS with specific origin
+- If serving frontend from different domain:
+  1. Generate CSRF token on backend
+  2. Include in API responses
+  3. Frontend sends X-CSRF-Token header
+
+### 🔍 Security Audit Points
+1. Always set `JWT_*_SECRET` to 64+ char random strings
+2. In production:
+   - Enable `COOKIE_SECURE` and `COOKIE_SAMESITE=Strict`
+   - Use real SMTP service (not MailDev)
+   - Set `SKIP_EMAIL_VERIFICATION=false`
+3. Regularly rotate JWT secrets
+4. Monitor failed login attempts
+
+## Frontend Security Components
+
+Angular provides reusable security components:
+
+### 🔒 AuthGuard
+- **Location**: `frontend/src/app/guards/auth.guard.ts`
+- **Purpose**: Protects routes requiring authentication
+- **Usage**:
+  ```typescript
+  { 
+    path: 'profile', 
+    component: ProfilePage,
+    canActivate: [AuthGuard]  // ← Requires authentication
+  }
+  ```
+- **Features**:
+  - Redirects unauthenticated users to `/login`
+  - Preserves return URL for post-login redirect
+
+### 🔄 AuthInterceptor
+- **Location**: `frontend/src/app/interceptors/auth.interceptor.ts`
+- **Purpose**: Automatically adds JWT to requests
+- **Features**:
+  - Adds `Authorization: Bearer <token>` header
+  - Handles 401 errors by attempting token refresh
+  - Logs out user when refresh fails
+- **Configuration**: Registered in `app.config.ts`:
+  ```typescript
+  provideHttpClient(withInterceptors([authInterceptor]))
+  ```
+
+### 👤 AuthService
+- **Location**: `frontend/src/app/services/auth.service.ts`
+- **Core Methods**:
+  - `login()`: Handles login flow + token storage
+  - `logout()`: Clears tokens + redirects
+  - `refresh()`: Silent token refresh
+- **Observables**:
+  - `isAuthenticated$`: Tracks login state
+  - `currentUser$`: Current user profile
+
+### 🛡️ Usage Example
+```typescript
+// profile.page.ts
+ngOnInit() {
+  this.auth.currentUser$.subscribe(user => {
+    this.user = user;  // Auto-updates when auth state changes
+  });
+}
+```
+
 ## Backend Setup (`backend/`)
 
 1. Install dependencies
