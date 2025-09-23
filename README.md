@@ -67,6 +67,122 @@ frontend/
 - Node.js LTS (>=18)
 - PostgreSQL (local or remote)
 
+## End-to-End Setup Guides
+
+### Option A: Docker (Recommended)
+
+This spins up PostgreSQL, MailDev, Backend, and Frontend.
+
+1. Start all services (build + run in background)
+   ```bash
+   docker-compose up -d --build
+   ```
+
+2. Create/update the database schema
+   ```bash
+   docker-compose exec backend npx prisma db push
+   # (optional) seed sample data
+   docker-compose exec backend npm run prisma:seed
+   ```
+
+3. Open the app
+   - Frontend: http://localhost:3000
+   - Backend API: http://localhost:4000
+   - MailDev (Email testing): http://localhost:1080
+   - PostgreSQL: localhost:5432
+
+4. Test the flow
+   - Register a user in the UI
+   - Open MailDev (http://localhost:1080), open the verification email, click the link
+
+Notes
+- SMTP is pre-wired for Docker via `SMTP_HOST=maildev` and `SMTP_PORT=1025` in `docker-compose.yml`.
+- If you re-install dependencies in containers, re-run `npx prisma db push`.
+
+### Option B: Manual (Local without Docker)
+
+1. PostgreSQL
+   - Option 1 (Dockerized Postgres only):
+     ```bash
+     docker run --name local-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:15
+     ```
+     Create the database once connected (psql or GUI):
+     ```sql
+     CREATE DATABASE auth_boilerplate;
+     ```
+   - Option 2 (Native Postgres): ensure a database named `auth_boilerplate` exists and you have a connection string.
+
+2. MailDev (Email testing)
+   ```bash
+   npx maildev -s 1025 -w 1080
+   # UI: http://localhost:1080, SMTP: localhost:1025
+   ```
+
+3. Backend (`backend/`)
+   ```bash
+   cd backend
+   npm install
+   cp .env.example .env
+   ```
+   Update `.env`:
+   - `DATABASE_URL=postgresql://postgres:password@localhost:5432/auth_boilerplate?schema=public`
+   - `CORS_ORIGIN=http://localhost:4200`
+   - `SMTP_HOST=localhost` and `SMTP_PORT=1025` (for MailDev)
+   - Set strong values for all JWT secrets
+   
+   Initialize DB and start the API:
+   ```bash
+   npx prisma db push
+   # optional: npm run prisma:seed
+   npm run dev
+   # API at http://localhost:4000
+   ```
+
+4. Frontend (`frontend/`)
+   ```bash
+   cd frontend
+   npm install
+   npm start
+   # App at http://localhost:4200
+   ```
+
+5. Test the flow
+   - Register in the UI → open MailDev (http://localhost:1080) → click verification link
+
+Tips
+- If you see a runtime error related to `LiteDateTime` from `ngx-lite-form`, pin the dependency to `"ngx-lite-form": "1.1.9"` in `frontend/package.json`.
+- Ensure the frontend dev server uses the included proxy (`proxy.conf.json`) so API calls go to `http://localhost:4000` with cookies.
+
+## Verify Setup Checklist
+
+- [ ] **Backend health**: `curl http://localhost:4000/api/health` → `{"status":"ok"}`
+- [ ] **Database online**: `docker-compose exec postgres pg_isready` (Docker) or connect via psql.
+- [ ] **Prisma schema applied**: `docker-compose exec backend npx prisma migrate status` shows database is up-to-date.
+- [ ] **Frontend reachable**: Open `http://localhost:3000` (Docker) or `http://localhost:4200` (manual) and see the landing page.
+- [ ] **Email flow**: Register a new user → open MailDev `http://localhost:1080`, open verification email, click link → login succeeds.
+- [ ] **JWT cookies**: Inspect browser dev tools – `access_token` & `refresh_token` cookies are set after login.
+
+## Architecture Overview
+
+```text
++-----------+      HTTP       +-----------+      HTTP      +-----------+
+|  Browser  | <-------------> | Frontend  | <------------> |  Backend  |
+| (Angular) |                 |  Nginx    |                |  Express  |
++-----------+                 +-----------+                +-----------+
+                                                            |
+                                                            |  SQL
+                                                            v
+                                                      +-----------+
+                                                      | Postgres  |
+                                                      +-----------+
+                                                            ^
+                                                            | SMTP
+                                                            v
+                                                      +-----------+
+                                                      | MailDev   |
+                                                      +-----------+
+```
+
 ## Backend Setup (`backend/`)
 
 1. Install dependencies
