@@ -1,5 +1,11 @@
 # Backend Dockerfile
-FROM node:20-alpine
+FROM node:20
+
+# Install build dependencies for native modules
+RUN apt-get update && apt-get install -y \
+    python3 \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
@@ -8,6 +14,9 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm ci
+
+# Rebuild bcrypt for the current architecture
+RUN npm rebuild bcrypt --build-from-source
 
 # Copy source code
 COPY . .

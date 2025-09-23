@@ -40,6 +40,8 @@ services:
       PORT: 4000
       CORS_ORIGIN: http://localhost:3000
       DATABASE_URL: postgresql://postgres:password@postgres:5432/auth_boilerplate?schema=public
+      SMTP_HOST: maildev
+      SMTP_PORT: 1025
       JWT_ACCESS_SECRET: dev_access_secret_replace_in_production
       JWT_ACCESS_EXPIRES: 15m
       JWT_REFRESH_SECRET: dev_refresh_secret_replace_in_production
