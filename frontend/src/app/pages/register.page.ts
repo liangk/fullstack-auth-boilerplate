@@ -3,14 +3,13 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MaterialModule } from '../material.module';
-import { FieldDto } from 'ngx-lite-form';
-import { LiteSnackbarService } from 'ngx-lite-form';
+import { FieldDto, LiteInput, LitePassword, LiteSnackbarService } from 'ngx-lite-form';
 import { RegisterResponse } from '../models/auth';
 
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, MaterialModule],
+  imports: [ReactiveFormsModule, RouterLink, MaterialModule, LiteInput, LitePassword],
   template: `
     <div class="register_content">
       <div class="title2">Register</div>

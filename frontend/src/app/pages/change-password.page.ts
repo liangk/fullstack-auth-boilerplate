@@ -5,23 +5,19 @@ import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { ChangePasswordRequest } from '../models/auth';
 import { MaterialModule } from '../material.module';
-import { FieldDto, LiteSnackbarService } from 'ngx-lite-form';
+import { FieldDto, LitePassword, LiteSnackbarService } from 'ngx-lite-form';
 
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MaterialModule,
-  ],
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule, LitePassword],
   template: `
     <div class="profile_content">
       <div class="title2">Change Password</div>
       <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()" novalidate>
-        <lite-input [control]="currentPassword"></lite-input>
-        <lite-input [control]="newPassword"></lite-input>
-        <lite-input [control]="confirmPassword"></lite-input>
+        <lite-password [control]="currentPassword"></lite-password>
+        <lite-password [control]="newPassword"></lite-password>
+        <lite-password [control]="confirmPassword"></lite-password>
         <div class="actions">
           <button mat-raised-button color="primary" type="submit" [disabled]="changePasswordForm.invalid || loading">
             <mat-spinner diameter="20" *ngIf="loading"></mat-spinner>

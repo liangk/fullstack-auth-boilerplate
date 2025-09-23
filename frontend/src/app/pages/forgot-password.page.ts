@@ -3,13 +3,12 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MaterialModule } from '../material.module';
-import { FieldDto } from 'ngx-lite-form';
-import { LiteSnackbarService } from 'ngx-lite-form';
+import { FieldDto, LiteSnackbarService, LiteInput } from 'ngx-lite-form';
 
 @Component({
   selector: 'app-forgot-password',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, MaterialModule],
+  imports: [ReactiveFormsModule, RouterLink, MaterialModule, LiteInput],
   template: `
     <div class="register_content">
       <div class="title2">Forgot Password</div>

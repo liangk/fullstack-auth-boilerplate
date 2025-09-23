@@ -10,13 +10,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
-import { LiteFormModule } from 'ngx-lite-form';
 
 const MaterialModules = [
   CommonModule,
   MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule,
   MatFormFieldModule, MatInputModule,
-  MatSnackBarModule, LiteFormModule
+  MatSnackBarModule
 ];
 
 @NgModule({
