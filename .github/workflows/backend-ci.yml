@@ -34,9 +34,13 @@ jobs:
 
     - name: Validate Prisma schema
       run: npx prisma validate
+      env:
+        DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
 
     - name: Generate Prisma client
       run: npx prisma generate
+      env:
+        DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
 
     - name: Check code formatting
       run: npm run format:check

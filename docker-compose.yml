@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: auth-boilerplate-postgres
+    environment:
+      POSTGRES_DB: auth_boilerplate
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  maildev:
+    image: maildev/maildev
+    container_name: auth-boilerplate-maildev
+    ports:
+      - "1080:1080"  # Web interface
+      - "1025:1025"  # SMTP server
+    environment:
+      MAILDEV_WEB_PORT: 1080
+      MAILDEV_SMTP_PORT: 1025
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: auth-boilerplate-backend
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      CORS_ORIGIN: http://localhost:3000
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/auth_boilerplate?schema=public
+      SMTP_HOST: maildev
+      SMTP_PORT: 1025
+      JWT_ACCESS_SECRET: dev_access_secret_replace_in_production
+      JWT_ACCESS_EXPIRES: 15m
+      JWT_REFRESH_SECRET: dev_refresh_secret_replace_in_production
+      JWT_REFRESH_EXPIRES: 7d
+      JWT_EMAIL_SECRET: dev_email_secret_replace_in_production
+      JWT_EMAIL_EXPIRES: 24h
+      JWT_PASSWORD_RESET_SECRET: dev_password_reset_secret_replace_in_production
+      JWT_PASSWORD_RESET_EXPIRES: 1h
+      ACCESS_TOKEN_COOKIE: access_token
+      REFRESH_TOKEN_COOKIE: refresh_token
+      SKIP_EMAIL_VERIFICATION: false
+      RATE_LIMIT_WINDOW_MINUTES: 15
+      RATE_LIMIT_MAX: 100
+      AUTH_RATE_LIMIT_WINDOW_MINUTES: 1
+      AUTH_RATE_LIMIT_MAX: 5
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: auth-boilerplate-frontend
+    ports:
+      - "3000:80"
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
