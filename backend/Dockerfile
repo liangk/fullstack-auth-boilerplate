@@ -1,31 +1,43 @@
-# Backend Dockerfile
-FROM node:20
-
-# Install build dependencies for native modules
-RUN apt-get update && apt-get install -y \
-    python3 \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
+# ---- Builder Stage ----
+# This stage builds the application
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
+# Copy dependency manifests
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install all dependencies (including devDependencies for building)
+RUN npm install
 
-# Rebuild bcrypt for the current architecture
-RUN npm rebuild bcrypt --build-from-source
-
-# Copy source code
+# Copy the rest of the source code
 COPY . .
 
-# Generate Prisma client
+# Generate Prisma Client to ensure it's available for the build
 RUN npx prisma generate
 
-# Expose port
+# Build the TypeScript project
+RUN npm run build
+
+# ---- Production Stage ----
+# This stage creates the final, lean image
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy dependency manifests and install *only* production dependencies
+COPY package*.json ./
+RUN npm ci --omit=dev
+
+# Copy the built application from the builder stage
+COPY --from=builder /app/dist ./dist
+
+# Copy the Prisma schema for runtime migration
+COPY --from=builder /app/prisma ./prisma
+
+# Expose the port the app runs on
 EXPOSE 4000
 
-# Default command (can be overridden in docker-compose)
-CMD ["npm", "run", "dev"]
+# The command to run in production.
+# This runs migrations and then starts the server.
+CMD ["npm", "run", "start:prod"]
