@@ -7,15 +7,14 @@ WORKDIR /app
 # Copy dependency manifests
 COPY package*.json ./
 
-# Install all dependencies (including devDependencies for building)
-RUN npm install
+# Install dependencies but ignore automatic postinstall scripts (like prisma generate)
+RUN npm install --ignore-scripts
 
 # Copy the rest of the source code
 COPY . .
 
-# Generate Prisma Client to ensure it's available for the build
-# Provide a dummy DATABASE_URL to satisfy Prisma validation during build.
-# The real DATABASE_URL will be injected at runtime.
+# Now, manually run prisma generate with the dummy database URL.
+# This ensures it runs in a controlled environment.
 RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npx prisma generate
 
 # Build the TypeScript project
@@ -29,7 +28,8 @@ WORKDIR /app
 
 # Copy dependency manifests and install *only* production dependencies
 COPY package*.json ./
-RUN npm ci --omit=dev
+# Install production dependencies, but again, ignore postinstall scripts.
+RUN npm ci --omit=dev --ignore-scripts
 
 # Copy the built application from the builder stage
 COPY --from=builder /app/dist ./dist
