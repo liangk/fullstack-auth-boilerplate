@@ -1,49 +1,37 @@
-# ---- Builder Stage ----
-# This stage builds the application
-FROM node:20-alpine AS builder
-
-WORKDIR /app
-
-# Copy dependency manifests
-COPY package*.json ./
-
-# Install dependencies but ignore automatic postinstall scripts (like prisma generate)
-RUN npm install --ignore-scripts
-
-# Copy the rest of the source code
-COPY . .
-
-# Now, manually run prisma generate with the dummy database URL.
-# This ensures it runs in a controlled environment.
-RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npx prisma generate
-
-# Build the TypeScript project
-RUN npm run build
-
-# ---- Production Stage ----
-# This stage creates the final, lean image
+# Production Dockerfile for Railway deployment
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy dependency manifests and install *only* production dependencies
+# Install OpenSSL to fix Prisma SSL warnings
+RUN apk add --no-cache openssl
+
+# Copy package files
 COPY package*.json ./
-# Install production dependencies, but again, ignore postinstall scripts.
-RUN npm ci --omit=dev --ignore-scripts
 
-# Copy the built application from the builder stage
-COPY --from=builder /app/dist ./dist
+# Install production dependencies only
+RUN npm ci --only=production
 
-# Copy the Prisma schema for runtime migration
-COPY --from=builder /app/prisma ./prisma
+# Copy source code
+COPY . .
 
-# Copy the generated Prisma client from the builder stage
-COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
-COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+# Build the application
+RUN npm run build
 
-# Expose the port the app runs on
+# Create a simple startup script that handles DATABASE_URL validation
+RUN echo '#!/bin/sh' > /app/start.sh && \
+    echo 'if [ -z "$DATABASE_URL" ]; then' >> /app/start.sh && \
+    echo '  echo "Error: DATABASE_URL environment variable is not set"' >> /app/start.sh && \
+    echo '  exit 1' >> /app/start.sh && \
+    echo 'fi' >> /app/start.sh && \
+    echo 'echo "Running Prisma migrations..."' >> /app/start.sh && \
+    echo 'npx prisma migrate deploy' >> /app/start.sh && \
+    echo 'echo "Starting application..."' >> /app/start.sh && \
+    echo 'node dist/index.js' >> /app/start.sh && \
+    chmod +x /app/start.sh
+
+# Expose port
 EXPOSE 4000
 
-# The command to run in production.
-# This runs migrations and then starts the server.
-CMD ["npm", "run", "start:prod"]
+# Use the startup script
+CMD ["/app/start.sh"]
