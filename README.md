@@ -1,631 +1,227 @@
 # Fullstack Auth Boilerplate
 
-Modern fullstack authentication boilerplate featuring:
+[![Backend CI](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml)
+[![Frontend CI](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/frontend-ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-- Backend: Node.js, Express, Prisma (PostgreSQL), JWT access/refresh tokens, secure cookies, CORS, Helmet, rate limiting, validation
-- Frontend: Angular (standalone components), Angular Material, ngx-lite-form for forms, responsive UI, form validation, snackbars
+A production-ready, secure, and feature-rich authentication boilerplate for modern fullstack applications. Built with **Angular**, **Express.js**, **PostgreSQL**, and **Prisma**, this starter kit provides a rock-solid foundation for your next project, with a strong emphasis on security and developer experience.
 
-This project provides a clean starting point for building authenticated web applications with a modern tech stack.
+This project implements authentication the right way: using **JWTs stored in secure, HTTP-only cookies** with refresh token rotation.
+
+---
 
 ## Features
 
-- __JWT auth with refresh tokens__ using HTTP-only cookies
-- __Email verification__ for account activation with secure JWT tokens
-- __Password reset flow__ with secure reset links and session invalidation
-- __Prisma ORM__ with PostgreSQL and a simple `User` model
-- __Security hardening__: Helmet, CORS, rate limiting, auth-only refresh, input validation
-- __Modern UI__: Clean, responsive design with Angular Material and custom styling
-- __Form handling__: Simplified form management with ngx-lite-form
-- __Development proxy__: Pre-configured proxy for API requests in development
+- **Secure JWT Authentication**: Access/refresh tokens stored in `HttpOnly` cookies.
+- **Refresh Token Rotation**: Automatically rotates refresh tokens to prevent replay attacks.
+- **Email Verification**: New user accounts must be verified via a secure email link.
+- **Password Reset Flow**: Secure, token-based password reset that invalidates old sessions.
+- **Dockerized Development**: One-command setup with Docker Compose for all services (Postgres, MailDev, Backend, Frontend).
+- **CI/CD Ready**: GitHub Actions workflows for automated linting, testing, and building.
+- **Security Hardening**: Includes Helmet, CORS, rate limiting, and input validation.
+- **Modern UI**: Clean and responsive UI built with Angular and Angular Material.
+- **Hot Reloading**: Instant feedback during development for both frontend and backend.
 
 ## Tech Stack
 
-- __Backend__: Express, Prisma, PostgreSQL, JSON Web Tokens
-- __Frontend__: 
-  - Angular 20.1.0 with Standalone Components
-  - Angular Material (MDC) 20.1.3
-  - ngx-lite-form 1.1.9 for form handling
-  - RxJS 7.8.0 for reactive programming
-  - TypeScript 5.8.0
-  - SCSS for styling
+| Area     | Technology                                                                                                  |
+| :------- | :---------------------------------------------------------------------------------------------------------- |
+| **Backend**  | [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [Prisma](https://www.prisma.io/), [PostgreSQL](https://www.postgresql.org/), [JWT](https://jwt.io/), [TypeScript](https://www.typescriptlang.org/) |
+| **Frontend** | [Angular](https://angular.io/), [Angular Material](https://material.angular.io/), [RxJS](https://rxjs.dev/), [SCSS](https://sass-lang.com/), [TypeScript](https://www.typescriptlang.org/)      |
+| **DevOps**   | [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/), [GitHub Actions](https://github.com/features/actions)                               |
 
-## Project Structure
+## Getting Started
+
+This project is designed to be run with Docker, which is the recommended and quickest way to get started.
+
+### Prerequisites
+
+- [Docker](https://www.docker.com/get-started) and [Docker Compose](https://docs.docker.com/compose/install/) installed and running.
+- A shell environment (like Bash, Zsh, or PowerShell).
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/liangk/fullstack-auth-boilerplate.git
+cd fullstack-auth-boilerplate
+```
+
+### 2. Start the Application
+
+Use the provided helper script to start all services:
+
+```bash
+./docker-dev.sh start
+```
+
+This single command will:
+1.  Build the Docker images for the frontend and backend.
+2.  Start the PostgreSQL database and a MailDev email testing server.
+3.  Run database migrations to set up the schema.
+4.  Start the backend and frontend servers with hot-reloading enabled.
+
+### 3. Access the Services
+
+Your full development environment is now running and accessible:
+
+- **Frontend Application**: [http://localhost:3000](http://localhost:3000)
+- **Backend API**: `http://localhost:4000`
+- **MailDev (Email Viewer)**: [http://localhost:1080](http://localhost:1080)
+- **PostgreSQL Database**: `localhost:5432`
+
+### 4. Verify the Setup
+
+- **Register a new user** through the frontend.
+- **Check MailDev**: Open [http://localhost:1080](http://localhost:1080) to see the verification email. Click the link to verify your account.
+- **Log in**: You should now be able to log in successfully.
+- **Check Cookies**: Use your browser's developer tools to confirm that `access_token` and `refresh_token` cookies are set as `HttpOnly`.
+
+<details>
+<summary><h3>Docker Helper Script Commands</h3></summary>
+
+The `docker-dev.sh` script provides a convenient interface for managing your development environment. Here are the available commands:
+
+| Command                  | Description                                                              |
+| :----------------------- | :----------------------------------------------------------------------- |
+| `./docker-dev.sh start`    | Starts all services in the foreground.                                   |
+| `./docker-dev.sh start-bg` | Starts all services in the background (detached mode).                   |
+| `./docker-dev.sh stop`     | Stops all running services.                                              |
+| `./docker-dev.sh restart`  | Restarts all services.                                                   |
+| `./docker-dev.sh logs`     | Tails the logs from all running services.                                |
+| `./docker-dev.sh migrate`  | Runs Prisma database migrations inside the backend container.            |
+| `./docker-dev.sh seed`     | Seeds the database with sample data.                                     |
+| `./docker-dev.sh studio`   | Opens Prisma Studio to view and manage your database.                    |
+| `./docker-dev.sh shell`    | Opens a shell inside the running backend container for debugging.        |
+| `./docker-dev.sh db-shell` | Opens a `psql` shell to the PostgreSQL database.                         |
+| `./docker-dev.sh clean`    | **(Destructive)** Stops and removes all containers, volumes, and networks. |
+
+</details>
+
+<details>
+<summary><h3>Manual Local Setup (Without Docker)</h3></summary>
+
+If you prefer not to use Docker, you can run the services locally. You will need:
+- Node.js (v18 or later)
+- A running PostgreSQL instance
+
+1.  **Set up PostgreSQL**: Ensure you have a PostgreSQL database running and create a new database (e.g., `auth_boilerplate`).
+
+2.  **Set up MailDev**: For local email testing, run `npx maildev` in a separate terminal.
+
+3.  **Configure Backend**:
+    - Navigate to the `backend` directory.
+    - Run `npm install`.
+    - Copy `.env.example` to `.env` and fill in the required values (see the Environment Variables section below).
+    - Run `npm run prisma:migrate` to set up the database schema.
+    - Run `npm run dev` to start the backend server.
+
+4.  **Configure Frontend**:
+    - Navigate to the `frontend` directory.
+    - Run `npm install`.
+    - Run `npm start` to start the frontend server.
+
+</details>
+
+<details>
+<summary><h3>Environment Variables</h3></summary>
+
+The backend requires the following environment variables, which should be defined in a `.env` file in the `backend` directory. You can copy the `.env.example` file to get started.
+
+| Variable                      | Description                                                                                                 | Default / Example                                    |
+| :---------------------------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
+| `PORT`                        | The port on which the backend server will run.                                                              | `4000`                                               |
+| `NODE_ENV`                    | The application environment. Set to `production` in production.                                             | `development`                                        |
+| `CORS_ORIGIN`                 | The URL of the frontend application for CORS policy.                                                        | `http://localhost:3000`                              |
+| `DATABASE_URL`                | The connection string for your PostgreSQL database.                                                         | `postgresql://USER:PASS@HOST:PORT/DB`                |
+| `JWT_ACCESS_SECRET`           | **(Required)** A strong, random secret for signing access tokens.                                           | `replace_me_with_a_strong_access_secret`             |
+| `JWT_ACCESS_EXPIRES`          | The expiration time for access tokens.                                                                      | `15m`                                                |
+| `JWT_REFRESH_SECRET`          | **(Required)** A strong, random secret for signing refresh tokens.                                          | `replace_me_with_a_strong_refresh_secret`            |
+| `JWT_REFRESH_EXPIRES`         | The expiration time for refresh tokens.                                                                     | `7d`                                                 |
+| `JWT_EMAIL_SECRET`            | **(Required)** A strong, random secret for signing email verification tokens.                               | `replace_me_with_a_strong_email_secret`              |
+| `JWT_EMAIL_EXPIRES`           | The expiration time for email verification tokens.                                                          | `24h`                                                |
+| `JWT_PASSWORD_RESET_SECRET`   | **(Required)** A strong, random secret for signing password reset tokens.                                   | `replace_me_with_a_strong_password_reset_secret`     |
+| `JWT_PASSWORD_RESET_EXPIRES`  | The expiration time for password reset tokens.                                                              | `1h`                                                 |
+| `SKIP_EMAIL_VERIFICATION`     | If `true`, new users will not need to verify their email to log in. **Should be `false` in production.**      | `false`                                              |
+| `RATE_LIMIT_WINDOW_MINUTES`   | The time window in minutes for the general API rate limiter.                                                | `15`                                                 |
+| `RATE_LIMIT_MAX`              | The maximum number of requests allowed per IP in the general rate limit window.                             | `100`                                                |
+| `AUTH_RATE_LIMIT_WINDOW_MINUTES` | The time window in minutes for the authentication-specific rate limiter.                                    | `1`                                                  |
+| `AUTH_RATE_LIMIT_MAX`         | The maximum number of requests allowed per IP in the auth rate limit window.                                | `5`                                                  |
+| `SMTP_HOST`                   | The host of your SMTP server for sending emails. (Leave empty for local MailDev)                            | `smtp.example.com`                                   |
+| `SMTP_PORT`                   | The port of your SMTP server.                                                                               | `587`                                                |
+| `SMTP_USER`                   | The username for your SMTP server.                                                                          | `your_email@example.com`                             |
+| `SMTP_PASS`                   | The password for your SMTP server.                                                                          | `your_app_password`                                  |
+
+</details>
+
+<details>
+<summary><h3>Project Structure</h3></summary>
 
 ```
 backend/
-  prisma/
-    schema.prisma
-    migrations/
-    seed.ts
+  prisma/          # Prisma schema, migrations, and seed scripts
   src/
-    index.ts
-    controllers/
-    routes/
-    middleware/
-    services/
-    utils/
+    controllers/   # Express route handlers
+    middleware/    # Express middleware (auth, validation, etc.)
+    routes/        # API route definitions
+    services/      # Business logic (user creation, etc.)
+    utils/         # Helper functions and constants
+    index.ts       # Main application entry point
   package.json
 
 frontend/
   src/
     app/
-      components/
-      interceptors/
-      pages/
-      services/
-      routes.ts
-      app.component.ts
-      app.config.ts
-    environments/
-    styles.scss
+      components/  # Reusable UI components
+      guards/      # Angular route guards (e.g., AuthGuard)
+      interceptors/ # HTTP interceptors (e.g., for adding auth tokens)
+      pages/       # Page-level components
+      services/    # Angular services (e.g., AuthService)
+      routes.ts    # Application routes
+    environments/  # Environment-specific configuration
     index.html
   package.json
 ```
 
-## Prerequisites
-
-- Node.js LTS (>=18)
-- PostgreSQL (local or remote)
-
-## End-to-End Setup Guides
-
-### Option A: Docker (Recommended)
-
-This spins up PostgreSQL, MailDev, Backend, and Frontend.
-
-1. Start all services (build + run in background)
-   ```bash
-   docker-compose up -d --build
-   ```
-
-2. Create/update the database schema
-   ```bash
-   docker-compose exec backend npx prisma db push
-   # (optional) seed sample data
-   docker-compose exec backend npm run prisma:seed
-   ```
-
-3. Open the app
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:4000
-   - MailDev (Email testing): http://localhost:1080
-   - PostgreSQL: localhost:5432
-
-4. Test the flow
-   - Register a user in the UI
-   - Open MailDev (http://localhost:1080), open the verification email, click the link
-
-Notes
-- SMTP is pre-wired for Docker via `SMTP_HOST=maildev` and `SMTP_PORT=1025` in `docker-compose.yml`.
-- If you re-install dependencies in containers, re-run `npx prisma db push`.
-
-### Option B: Manual (Local without Docker)
-
-1. PostgreSQL
-   - Option 1 (Dockerized Postgres only):
-     ```bash
-     docker run --name local-postgres -e POSTGRES_PASSWORD=password -p 5432:5432 -d postgres:15
-     ```
-     Create the database once connected (psql or GUI):
-     ```sql
-     CREATE DATABASE auth_boilerplate;
-     ```
-   - Option 2 (Native Postgres): ensure a database named `auth_boilerplate` exists and you have a connection string.
-
-2. MailDev (Email testing)
-   ```bash
-   npx maildev -s 1025 -w 1080
-   # UI: http://localhost:1080, SMTP: localhost:1025
-   ```
-
-3. Backend (`backend/`)
-   ```bash
-   cd backend
-   npm install
-   cp .env.example .env
-   ```
-   Update `.env`:
-   - `DATABASE_URL=postgresql://postgres:password@localhost:5432/auth_boilerplate?schema=public`
-   - `CORS_ORIGIN=http://localhost:4200`
-   - `SMTP_HOST=localhost` and `SMTP_PORT=1025` (for MailDev)
-   - Set strong values for all JWT secrets
-   
-   Initialize DB and start the API:
-   ```bash
-   npx prisma db push
-   # optional: npm run prisma:seed
-   npm run dev
-   # API at http://localhost:4000
-   ```
-
-4. Frontend (`frontend/`)
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   # App at http://localhost:4200
-   ```
-
-5. Test the flow
-   - Register in the UI → open MailDev (http://localhost:1080) → click verification link
-
-Tips
-- If you see a runtime error related to `LiteDateTime` from `ngx-lite-form`, pin the dependency to `"ngx-lite-form": "1.1.9"` in `frontend/package.json`.
-- Ensure the frontend dev server uses the included proxy (`proxy.conf.json`) so API calls go to `http://localhost:4000` with cookies.
-
-## Verify Setup Checklist
-
-- [ ] **Backend health**: `curl http://localhost:4000/api/health` → `{"status":"ok"}`
-- [ ] **Database online**: `docker-compose exec postgres pg_isready` (Docker) or connect via psql.
-- [ ] **Prisma schema applied**: `docker-compose exec backend npx prisma migrate status` shows database is up-to-date.
-- [ ] **Frontend reachable**: Open `http://localhost:3000` (Docker) or `http://localhost:4200` (manual) and see the landing page.
-- [ ] **Email flow**: Register a new user → open MailDev `http://localhost:1080`, open verification email, click link → login succeeds.
-- [ ] **JWT cookies**: Inspect browser dev tools – `access_token` & `refresh_token` cookies are set after login.
-
-## Architecture Overview
-
-```text
-+-----------+      HTTP       +-----------+      HTTP      +-----------+
-|  Browser  | <-------------> | Frontend  | <------------> |  Backend  |
-| (Angular) |                 |  Nginx    |                |  Express  |
-+-----------+                 +-----------+                +-----------+
-                                                            |
-                                                            |  SQL
-                                                            v
-                                                      +-----------+
-                                                      | Postgres  |
-                                                      +-----------+
-                                                            ^
-                                                            | SMTP
-                                                            v
-                                                      +-----------+
-                                                      | MailDev   |
-                                                      +-----------+
-```
-
-## Security Checklist
-
-This boilerplate includes industry-standard security practices:
-
-### ✅ Authentication Security
-- **JWT Tokens**: Access/refresh tokens stored in HTTP-only cookies
-- **Token Rotation**: Refresh tokens invalidated after use
-- **Short-Lived Access Tokens**: 15-minute expiration (configurable)
-- **Bcrypt Password Hashing**: 10 rounds of salting
-- **Session Invalidation**: All sessions terminated on password reset
-
-### ✅ API Protection
-- **Rate Limiting**:
-  - Global: 100 requests/15 minutes
-  - Auth endpoints: 5 requests/minute
-- **Helmet Middleware**: Security headers (XSS, HSTS, CSP)
-- **CORS**: Strict origin validation (`CORS_ORIGIN`)
-- **Input Validation**: All endpoints validated with express-validator
-
-### ✅ Cookie Security
-```yaml
-# Development
-access_token: HttpOnly, SameSite=Lax
-refresh_token: HttpOnly, SameSite=Lax
-
-# Production (add to .env)
-COOKIE_SECURE=true  # Requires HTTPS
-COOKIE_SAMESITE=Strict
-```
-
-### 🔐 CSRF Protection
-- Not needed when using:
-  - HTTP-only cookies
-  - SameSite=Lax/Strict
-  - CORS with specific origin
-- If serving frontend from different domain:
-  1. Generate CSRF token on backend
-  2. Include in API responses
-  3. Frontend sends X-CSRF-Token header
-
-### 🔍 Security Audit Points
-1. Always set `JWT_*_SECRET` to 64+ char random strings
-2. In production:
-   - Enable `COOKIE_SECURE` and `COOKIE_SAMESITE=Strict`
-   - Use real SMTP service (not MailDev)
-   - Set `SKIP_EMAIL_VERIFICATION=false`
-3. Regularly rotate JWT secrets
-4. Monitor failed login attempts
-
-## Frontend Security Components
-
-Angular provides reusable security components:
-
-### 🔒 AuthGuard
-- **Location**: `frontend/src/app/guards/auth.guard.ts`
-- **Purpose**: Protects routes requiring authentication
-- **Usage**:
-  ```typescript
-  { 
-    path: 'profile', 
-    component: ProfilePage,
-    canActivate: [AuthGuard]  // ← Requires authentication
-  }
-  ```
-- **Features**:
-  - Redirects unauthenticated users to `/login`
-  - Preserves return URL for post-login redirect
-
-### 🔄 AuthInterceptor
-- **Location**: `frontend/src/app/interceptors/auth.interceptor.ts`
-- **Purpose**: Automatically adds JWT to requests
-- **Features**:
-  - Adds `Authorization: Bearer <token>` header
-  - Handles 401 errors by attempting token refresh
-  - Logs out user when refresh fails
-- **Configuration**: Registered in `app.config.ts`:
-  ```typescript
-  provideHttpClient(withInterceptors([authInterceptor]))
-  ```
-
-### 👤 AuthService
-- **Location**: `frontend/src/app/services/auth.service.ts`
-- **Core Methods**:
-  - `login()`: Handles login flow + token storage
-  - `logout()`: Clears tokens + redirects
-  - `refresh()`: Silent token refresh
-- **Observables**:
-  - `isAuthenticated$`: Tracks login state
-  - `currentUser$`: Current user profile
-
-### 🛡️ Usage Example
-```typescript
-// profile.page.ts
-ngOnInit() {
-  this.auth.currentUser$.subscribe(user => {
-    this.user = user;  // Auto-updates when auth state changes
-  });
-}
-```
-
-## Backend Setup (`backend/`)
-
-1. Install dependencies
-
-```bash
-npm install
-```
-
-2. Copy environment file and configure
-
-```bash
-cp .env.example .env
-```
-
-On Windows:
-
-```powershell
-Copy-Item .env.example .env
-```
-
-```cmd
-copy .env.example .env
-```
-
-Update `.env`:
-
-- `DATABASE_URL` points to your PostgreSQL instance
-- `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `JWT_EMAIL_SECRET`, and `JWT_PASSWORD_RESET_SECRET` are strong random strings
-- `CORS_ORIGIN` must match the frontend URL (default Angular dev server is `http://localhost:4200`)
-- `SKIP_EMAIL_VERIFICATION` set to `true` for development or `false` for production
-
-3. Initialize database
-
-```bash
-npm run prisma:generate
-npm run prisma:migrate
-# optional
-npm run prisma:seed
-```
-
-4. Start the server
-
-```bash
-npm run dev
-```
-
-Backend runs on `http://localhost:4000` by default.
-
-## Frontend Setup (`frontend/`)
-
-1. Install dependencies
-
-```bash
-npm install
-```
-
-2. Environment Configuration
-
-- `src/environments/environment.development.ts` - Development settings
-- `src/environments/environment.ts` - Production settings
-
-3. Proxy Configuration
-
-A `proxy.conf.json` is included to route API requests to the backend during development:
-```json
-{
-  "/api": {
-    "target": "http://localhost:4000",
-    "secure": false,
-    "changeOrigin": true
-  }
-}
-```
-
-4. Start the development server
-
-```bash
-npm start
-```
-
-The frontend will be available at `http://localhost:4200` by default.
-
-## Docker Setup (Recommended for Development)
-
-This project includes a complete Docker Compose setup with PostgreSQL, MailDev, backend, and frontend services.
-
-### Prerequisites
-
-- Docker Desktop installed and running
-- Docker Compose (included with Docker Desktop)
-
-### Quick Start with Docker
-
-1. **Clone the repository** (if not already done)
-
-2. **Start all services:**
-```bash
-docker-compose up --build
-```
-Or use the helper script:
-```bash
-./docker-dev.sh start
-```
-
-3. **Access the application:**
-   - **Frontend:** http://localhost:3000
-   - **Backend API:** http://localhost:4000
-   - **MailDev (Email Testing):** http://localhost:1080
-   - **PostgreSQL:** localhost:5432
-
-### Docker Services
-
-- **PostgreSQL**: Database server with persistent data volume
-- **MailDev**: Email testing server (captures all emails sent by the app)
-- **Backend**: Node.js/Express API server with hot reload
-- **Frontend**: Angular SPA served by Nginx with API proxy
-
-### Useful Docker Commands
-
-```bash
-# Quick commands using helper script
-./docker-dev.sh start      # Start all services
-./docker-dev.sh start-bg   # Start in background
-./docker-dev.sh stop       # Stop all services
-./docker-dev.sh restart    # Restart all services
-./docker-dev.sh logs       # View logs
-./docker-dev.sh migrate    # Run migrations
-./docker-dev.sh seed       # Seed database
-./docker-dev.sh studio     # Open Prisma Studio
-./docker-dev.sh clean      # Clean up everything
-
-# Or use docker-compose directly
-# Start services in background
-docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-
-# Rebuild and restart
-docker-compose up --build --force-recreate
-
-# Clean up (removes volumes too)
-docker-compose down -v
-
-# Run database migrations in container
-docker-compose exec backend npm run prisma:migrate
-
-# Access database directly
-docker-compose exec postgres psql -U postgres -d auth_boilerplate
-
-# View MailDev emails
-open http://localhost:1080
-```
-
-### Environment Configuration
-
-The Docker setup includes pre-configured environment variables for development:
-
-- **Database:** `postgresql://postgres:password@postgres:5432/auth_boilerplate`
-- **JWT Secrets:** Development secrets (replace in production)
-- **Email:** Uses MailDev instead of real SMTP
-- **CORS:** Configured for `http://localhost:3000`
-
-### Development Workflow with Docker
-
-1. **Make code changes** - Files are volume-mounted, so changes are reflected immediately
-2. **Backend hot reload** - Uses `ts-node-dev` for automatic restarts
-3. **Frontend hot reload** - Angular dev server with proxy to backend
-4. **Database persistence** - Data survives container restarts
-
-### Production Deployment
-
-For production, create a `docker-compose.prod.yml` with:
-- Environment-specific secrets
-- Production database URL
-- Real SMTP configuration
-- SSL/TLS certificates
-
-## Authentication Flow
-
-- Login/Register set auth cookies via `withCredentials: true` requests
-- Protected calls return 401 -> interceptor attempts `/auth/refresh`
-- Logout clears cookies; `isAuthenticated$` updates in the `AuthService`
-
-### Email Verification Flow
-
-1. User registers → Email sent with verification link (if `SKIP_EMAIL_VERIFICATION=false`)
-2. User clicks link → Account activated, can now login
-3. Login blocked until email verified (if email verification required)
-
-### Password Reset Flow
-
-1. User clicks "Forgot password?" → Enters email on reset page
-2. System sends password reset email with secure token link
-3. User clicks link → Redirected to password reset form
-4. User sets new password → All existing sessions invalidated
-5. User can login with new password
-
-## API Endpoints (Backend)
-
-### Authentication
-- `POST /api/auth/register` – Register a new user
-  - Body: `{ email: string, password: string, name?: string }`
-  - Password requirements: 8+ chars, 1+ lowercase, 1+ uppercase, 1+ number
-  - Returns: User profile and sets HTTP-only cookies
-  - If `SKIP_EMAIL_VERIFICATION=false`, sends verification email and returns `requiresVerification: true`
-
-- `POST /api/auth/login` – Authenticate user
-  - Body: `{ email: string, password: string }`
-  - Returns: User profile and sets HTTP-only cookies (if email verified)
-
-- `POST /api/auth/logout` – Invalidate tokens
-  - Requires authentication
-  - Clears HTTP-only cookies
-
-- `POST /api/auth/refresh` – Refresh access token
-  - Uses refresh token from cookies
-  - Returns new access token in cookies
-
-- `GET /api/auth/profile` – Get current user profile
-  - Requires authentication
-  - Returns: `{ id: string, email: string, name?: string, emailVerified: boolean }`
-
-- `GET /api/auth/verify-email` – Verify email address
-  - Query param: `token` (JWT verification token)
-  - Activates user account for login
-
-- `POST /api/auth/resend-verification` – Resend verification email
-  - Body: `{ email: string }`
-  - Sends new verification email if account exists and isn't verified
-
-- `POST /api/auth/forgot-password` – Request password reset
-  - Body: `{ email: string }`
-  - Sends password reset email (if account exists)
-
-- `POST /api/auth/reset-password` – Reset password with token
-  - Body: `{ token: string, password: string }`
-  - Updates password and invalidates all existing sessions
-
-### Health Check
-- `GET /api/health` – Basic health check endpoint
-
-> Note: All `/api/auth/*` endpoints have aliases under `/auth/*` for backward compatibility.
-> All auth responses set HTTP-only cookies for token management.
+</details>
 
 ## CI/CD Pipeline
 
-### Backend CI/CD
+This project uses **GitHub Actions** for continuous integration. Workflows are defined in the `.github/workflows` directory and run automatically on pushes and pull requests to the `main` and `develop` branches.
 
-The backend includes a comprehensive CI/CD pipeline using GitHub Actions that runs on every push and pull request to `main` and `develop` branches.
+- **Backend CI**: Lints, formats, tests, and validates the backend code, uploading coverage reports to Codecov.
+- **Frontend CI**: Lints and builds the frontend application to ensure it remains in a deployable state.
 
-**What it does:**
-- ✅ **Code Quality**: ESLint for TypeScript linting
-- ✅ **Code Formatting**: Prettier for consistent code style
-- ✅ **Testing**: Jest for unit testing with coverage reports
-- ✅ **Database**: Prisma client generation
-- ✅ **Coverage Reports**: Upload coverage to Codecov
+<details>
+<summary><h3>API Endpoints</h3></summary>
 
-**Setup Requirements:**
+| Method | Endpoint                      | Description                                   |
+| :----- | :---------------------------- | :-------------------------------------------- |
+| `POST` | `/api/auth/register`          | Register a new user.                          |
+| `POST` | `/api/auth/login`             | Authenticate a user and receive tokens.       |
+| `POST` | `/api/auth/logout`            | Invalidate the user's session.                |
+| `POST` | `/api/auth/refresh`           | Obtain a new access token using a refresh token.|
+| `GET`  | `/api/auth/profile`           | Get the current authenticated user's profile. |
+| `GET`  | `/api/auth/verify-email`      | Verify a user's email address with a token.   |
+| `POST` | `/api/auth/resend-verification` | Resend the email verification link.           |
+| `POST` | `/api/auth/forgot-password`   | Request a password reset email.               |
+| `POST` | `/api/auth/reset-password`    | Set a new password using a reset token.       |
+| `GET`  | `/api/health`                 | Health check endpoint.                        |
 
-1. **Install Dependencies** (one-time setup):
-```bash
-cd backend
-npm install
-```
+</details>
 
-2. **Add Repository Secrets** (in GitHub Settings → Secrets and variables → Actions):
-   - `TEST_DATABASE_URL`: PostgreSQL connection string for test database
+<details>
+<summary><h3>Security Overview</h3></summary>
 
-3. **Local Development Commands**:
-```bash
-# Linting
-npm run lint          # Check for linting errors
-npm run lint:fix      # Auto-fix linting errors
+This boilerplate is built with a security-first mindset.
 
-# Code formatting
-npm run format        # Format code with Prettier
-npm run format:check  # Check if code is formatted
+- **Secure Cookies**: JWTs are stored in `HttpOnly`, `Secure` (in production), and `SameSite` cookies.
+- **Password Hashing**: Passwords are hashed using `bcrypt`.
+- **API Protection**: Includes rate limiting, Helmet for security headers, and strict CORS policies.
+- **Input Validation**: All API inputs are validated to prevent injection attacks.
+- **Session Invalidation**: Password resets automatically invalidate all other active sessions.
 
-# Testing
-npm run test          # Run all tests
-npm run test:watch    # Run tests in watch mode
-npm run test:coverage # Run tests with coverage report
-```
-
-**Workflow File**: `.github/workflows/backend-ci.yml`
-
-The pipeline will automatically:
-- Run on pushes to `main`/`develop` branches
-- Run on pull requests targeting `main`/`develop` branches
-- Only trigger when backend files are changed (`backend/**`)
-
-## Useful Scripts
-
-Backend (`backend/package.json`):
-
-- `npm run dev` – start dev server with ts-node-dev
-- `npm run build` / `npm start` – production build/run
-- `npm run prisma:generate` – generate Prisma client
-- `npm run prisma:migrate` – dev migration
-- `npm run prisma:deploy` – deploy migrations in prod
-- `npm run prisma:seed` – seed database
-- `npm run prisma:studio` – open Prisma Studio
-
-Frontend (`frontend/package.json`):
-
-- `npm start` – Angular dev server
-- `npm run build` – production build
-
-## Troubleshooting
-
-### CORS or Cookie Issues
-- Ensure `CORS_ORIGIN` in backend `.env` matches your frontend origin
-- Verify frontend requests include `withCredentials: true` (configured in `auth.service.ts`)
-- Check browser console for CORS errors and verify the proxy is working
-
-### Authentication
-- Ensure cookies are being sent with requests (check browser dev tools)
-- Verify token refresh is working by checking network requests
-- Check backend logs for authentication errors
-
-### Database
-- Verify `DATABASE_URL` in `.env` is correct
-- Run migrations with `npm run prisma:migrate`
-- Use `prisma studio` to inspect the database if needed
-
-### Development
-- If making changes to the proxy config, restart the Angular dev server
-- Clear browser cache if you encounter stale assets
-- Check browser console for runtime errors
-
-## Security Notes
-
-- Use strong JWT secrets (`JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `JWT_EMAIL_SECRET`, `JWT_PASSWORD_RESET_SECRET`) and rotate them periodically.
-- Set production cookie flags appropriately (e.g., `Secure`, `SameSite` per deployment topology).
-- Rate limits are included for both general and auth-specific routes (see `.env.example`).
-- Email verification prevents unauthorized account access.
-- Password reset tokens expire quickly (1 hour) and invalidate all existing sessions upon use.
-- Password reset responses don't reveal account existence for security.
+</details>
 
 ## License
 
-MIT
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
