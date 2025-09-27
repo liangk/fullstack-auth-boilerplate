@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://fullstack-auth-boilerplate.onrender.com/api'
+  apiUrl: 'https://fullstack-auth-boilerplate-production.up.railway.app/api'
 };

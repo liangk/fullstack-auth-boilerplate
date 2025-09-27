@@ -1,10 +1,24 @@
-# 🔐 Modern Fullstack Authentication Boilerplate: A Comprehensive Guide  
+---
+title: "Modern Fullstack Authentication Boilerplate: Complete Guide 2025"
+description: "Build secure authentication with Angular, Express, PostgreSQL. Features JWT HTTP-only cookies, refresh token rotation, and TypeScript. Complete starter kit with best practices."
+keywords: "fullstack authentication, Angular Express authentication, JWT HTTP-only cookies, refresh token rotation, TypeScript authentication boilerplate, secure login system, PostgreSQL authentication, Angular Material login"
+date: "2025-09-02"
+author: "Ko-Hsin Liang"
+categories: ["Authentication", "Angular", "Express", "Security", "TypeScript"]
+tags: ["JWT", "HTTP-only cookies", "Prisma", "PostgreSQL", "Angular Material", "refresh tokens"]
+---
+
+# Modern Fullstack Authentication Boilerplate: A Comprehensive Guide  
 **Secure Angular + Express + PostgreSQL Starter with HTTP-only Cookies**
+
+## 🎯 Quick Summary
+**Problem**: Most authentication tutorials store JWTs in localStorage (vulnerable to XSS attacks)  
+**Solution**: This boilerplate uses HTTP-only cookies with refresh token rotation for maximum security  
+**Result**: Production-ready authentication system you can deploy immediately
 
 Authentication is one of the most critical—and often most misunderstood—parts of fullstack development. Get it wrong, and your app is vulnerable to XSS, CSRF, token theft, or session hijacking. Get it right, and you've still spent weeks on boilerplate before writing a single business feature.
 
 That's why I built the **[Fullstack Auth Boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)** — a secure, production-ready starter kit using **Angular**, **Express**, **PostgreSQL**, and **Prisma**, with authentication implemented the right way: **JWT in HTTP-only cookies**, refresh token rotation, and end-to-end TypeScript.
-
 👉 **GitHub Repo**: [https://github.com/liangk/fullstack-auth-boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)
 
 In this **comprehensive guide**, you'll learn:
@@ -17,6 +31,14 @@ In this **comprehensive guide**, you'll learn:
 
 Whether you're building an admin dashboard, internal tool, or SaaS platform, this guide will help you **build faster and safer**.
 
+## 🎯 What You'll Learn
+- ✅ **Security-first authentication** with HTTP-only cookies
+- ✅ **Complete implementation** from database to UI
+- ✅ **Production deployment** checklist and best practices
+- ✅ **Extension strategies** for OAuth, 2FA, and role-based access
+- ✅ **Performance optimization** techniques
+- ✅ **Common troubleshooting** solutions
+
 ---
 
 ## 🚀 What Is This Boilerplate?
@@ -28,14 +50,18 @@ It includes:
 - ✅ JWT in **HTTP-only, SameSite cookies** (no localStorage)
 - ✅ Refresh token rotation
 - ✅ Protected routes (frontend and backend)
-- ✅ Type-safe API with **TypeScript** and **express-validator**
+- ✅ Type-safe API with **Zod** and **TypeScript**
 - ✅ Clean UI with **Angular Material**
 - ✅ Database modeling with **Prisma ORM**
 - ✅ Automatic token refresh
 - ✅ CORS and environment configuration
 - ✅ bcrypt password hashing
+- ✅ Email verification
+- ✅ Secure password reset
+- ✅ Dockerized for easy setup
+- ✅ CI/CD pipelines for quality assurance
 
-No Firebase. No Auth0. No email services. No third-party dependencies for auth.
+No Firebase. No Auth0. No third-party dependencies for auth.
 
 Just pure, secure, and customizable code you fully control.
 
@@ -115,113 +141,57 @@ Let's walk through the full authentication lifecycle.
 ### 1. **User Registration**
 
 **Frontend (Angular)**:
-```typescript
-// register.component.ts
-register() {
-  this.authService.register(this.registerForm.value).subscribe({
-    next: () => {
-      // Automatically logged in after registration
-      this.router.navigate(['/dashboard']);
-    },
-    error: (err) => {
-      this.error = err.message;
-    }
-  });
-}
-```
+- User fills out email and password in an Angular Material form.
+- Form validation ensures valid input.
+- Data sent to `POST /api/auth/register`.
 
 **Backend (Express)**:
-```typescript
-// authController.ts
-export async function register(req: Request, res: Response) {
-  const { email, password, name } = req.body;
-  
-  // Check if email already exists
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
-    return res.status(409).json({ message: 'Email already registered' });
-  }
-
-  // Hash password and create user
-  const passwordHash = await bcrypt.hash(password, 12);
-  const user = await prisma.user.create({
-    data: { 
-      email, 
-      password: passwordHash, 
-      name,
-      tokenVersion: 0  // Initialize token version
-    },
-    select: { 
-      id: true, 
-      email: true, 
-      name: true, 
-      createdAt: true 
-    }
-  });
-
-  // Generate tokens and set cookies (same as login)
-  const accessToken = signAccessToken(user.id);
-  const refreshToken = signRefreshToken(user.id, 0);
-  
-  // Set HTTP-only cookies
-  setAccessCookie(res, accessToken);
-  setRefreshCookie(res, refreshToken);
-
-  res.status(201).json({ user });
-}
+```ts
+const hashedPassword = await bcrypt.hash(password, 10);
+await prisma.user.create({
+  data: { email, password: hashedPassword }
+});
 ```
+- Password is hashed with `bcrypt` (salt + slow hash).
+- User saved to PostgreSQL.
 
-✅ User is registered and immediately authenticated  
-✅ Password securely hashed with bcrypt  
-✅ Tokens set in HTTP-only cookies
+✅ No token returned — user must log in.
 
 ---
 
 ### 2. **Login**
 
-**Frontend (Angular)**:
-```typescript
-// login.component.ts
-login() {
-  this.authService.login(this.loginForm.value).subscribe({
-    next: () => {
-      this.router.navigate(['/dashboard']);
-    },
-    error: (err) => {
-      this.error = err.message;
-    }
-  });
+**Frontend**:
+- Sends credentials to `POST /api/auth/login`.
+
+**Backend**:
+```ts
+// Validate credentials
+const user = await prisma.user.findUnique({ where: { email } });
+if (!user || !await bcrypt.compare(password, user.password)) {
+  return res.status(401).json({ error: 'Invalid credentials' });
 }
-```
 
-**Backend (Express)**:
-```typescript
-// authController.ts
-export async function login(req: Request, res: Response) {
-  const { email, password } = req.body;
-  
-  // Find user by email
-  const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) {
-    return res.status(401).json({ message: 'Invalid credentials' });
+// Generate tokens
+const accessToken = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '15m' });
+const refreshToken = jwt.sign({ userId: user.id }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+
+// Store refresh token in DB
+await prisma.refreshToken.create({
+  data: {
+    token: refreshToken,
+    userId: user.id,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
   }
+});
 
-  // Verify password
-  const isValid = await bcrypt.compare(password, user.password);
-  if (!isValid) {
-    return res.status(401).json({ message: 'Invalid credentials' });
-  }
-
-  // Generate tokens
-  const accessToken = signAccessToken(user.id);
-  const refreshToken = signRefreshToken(user.id, user.tokenVersion);
-  
-  // Set HTTP-only cookies
-  setAccessCookie(res, accessToken);
-  setRefreshCookie(res, refreshToken);
-
-  res.json({ user });
-}
+// Set HTTP-only cookie
+res.cookie('accessToken', accessToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 15 * 60 * 1000
+});
 ```
 
 ✅ Access token in HTTP-only cookie  
@@ -232,50 +202,30 @@ export async function login(req: Request, res: Response) {
 ### 3. **Protected Routes**
 
 **Frontend (Angular Guard)**:
-```typescript
-// auth.guard.ts
-export const authGuard: CanActivateFn = () => {
-  const auth = inject(AuthService);
-  const router = inject(Router);
-  
-  return auth.checkAuth().pipe(
-    tap(isAuthed => {
-      if (!isAuthed) router.navigate(['/login']);
-    }),
-    map(isAuthed => isAuthed)
-  );
-};
-
-// Usage in routes:
-const routes: Routes = [
-  { 
-    path: 'dashboard', 
-    component: DashboardComponent,
-    canActivate: [authGuard] 
+```ts
+@Injectable()
+export class AuthGuard implements CanActivate {
+  async canActivate(): Promise<boolean> {
+    const res = await fetch('/api/auth/me');
+    if (res.ok) return true;
+    this.router.navigate(['/login']);
+    return false;
   }
-];
+}
 ```
 
 **Backend (Middleware)**:
-```typescript
-// requireAuth.ts
-export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const token = req.cookies?.['access_token'];
-  if (!token) return res.status(401).json({ message: 'Unauthorized' });
+```ts
+export const authenticate = (req, res, next) => {
+  const token = req.cookies.accessToken;
+  if (!token) return res.status(401).json({ error: 'No token' });
 
-  try {
-    const payload = verifyAccessToken(token);
-    req.userId = payload.sub;
-    return next();
-  } catch (_e) {
-    return res.status(401).json({ message: 'Invalid or expired token' });
-  }
-}
-
-// Usage in routes:
-router.get('/protected', requireAuth, (req, res) => {
-  res.json({ message: 'Protected data' });
-});
+  jwt.verify(token, JWT_SECRET, (err, payload) => {
+    if (err) return res.status(401).json({ error: 'Invalid token' });
+    req.userId = payload.userId;
+    next();
+  });
+};
 ```
 
 ✅ Route protection on both sides  
@@ -290,67 +240,53 @@ Access tokens expire every 15 minutes. But users shouldn't log in every 15 minut
 So we use **refresh tokens**:
 
 **Frontend**:
-- Uses an HTTP interceptor to detect 401 responses
-- Automatically calls `POST /api/auth/refresh` to get a new access token
-- Retries the original request with the new token
+- Detects 401 (token expired)
+- Calls `POST /api/auth/refresh`
 
 **Backend**:
-```typescript
-// authController.ts
-export async function refresh(req: Request, res: Response) {
-  const refreshToken = req.cookies?.refresh_token;
-  if (!refreshToken) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+```ts
+const refreshToken = req.cookies.refreshToken;
+const stored = await prisma.refreshToken.findUnique({ where: { token: refreshToken } });
 
-  try {
-    // Verify the refresh token and extract the user ID and token version
-    const payload = jwt.verify(refreshToken, JWT_REFRESH_SECRET) as { sub: string; tv: number };
-    
-    // Get the user and verify the token version matches
-    const user = await prisma.user.findUnique({ where: { id: payload.sub } });
-    if (!user || user.tokenVersion !== payload.tv) {
-      return res.status(401).json({ message: 'Token invalidated' });
-    }
-
-    // Issue a new access token
-    const accessToken = jwt.sign({ sub: user.id }, JWT_ACCESS_SECRET, { 
-      expiresIn: process.env.JWT_ACCESS_EXPIRES || '15m' 
-    });
-    
-    // Set the new access token in an HTTP-only cookie
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-      maxAge: 15 * 60 * 1000, // 15 minutes
-      path: '/'
-    });
-    
-    return res.json({ message: 'Token refreshed' });
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid refresh token' });
-  }
+if (!stored || stored.expiresAt < new Date()) {
+  return res.status(401).json({ error: 'Refresh token invalid' });
 }
+
+// Rotate: delete old, create new
+await prisma.refreshToken.delete({ where: { token: refreshToken } });
+const newRefreshToken = jwt.sign({ userId: stored.userId }, JWT_REFRESH_SECRET, { expiresIn: '7d' });
+await prisma.refreshToken.create({
+  data: {
+    token: newRefreshToken,
+    userId: stored.userId,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  }
+});
+
+// Issue new access token
+const newAccessToken = jwt.sign({ userId: stored.userId }, JWT_SECRET, { expiresIn: '15m' });
+res.cookie('accessToken', newAccessToken, {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'strict',
+  maxAge: 15 * 60 * 1000
+});
 ```
 
-✅ **Token versioning** prevents replay attacks when users log out  
+✅ **Refresh token rotation** prevents replay attacks  
 ✅ User stays logged in seamlessly
 
 ---
 
 ### 5. **Logout**
 
-```typescript
-// Invalidate all user's refresh tokens by incrementing tokenVersion
-await prisma.user.update({
-  where: { id: req.userId },
-  data: { tokenVersion: { increment: 1 } }
-});
+```ts
+// Remove refresh token from DB
+await prisma.refreshToken.deleteMany({ where: { userId: req.userId } });
 
-// Clear cookies
-res.clearCookie('access_token', { path: '/' });
-res.clearCookie('refresh_token', { path: '/' });
+// Clear cookie
+res.clearCookie('accessToken');
+res.clearCookie('refreshToken');
 ```
 
 ✅ Session fully invalidated  
@@ -358,50 +294,106 @@ res.clearCookie('refresh_token', { path: '/' });
 
 ---
 
+### 6. **Email Verification**
+
+To ensure users own their email addresses, the boilerplate includes an email verification flow.
+
+**Backend (On Registration)**:
+```ts
+// After user creation
+const verificationToken = signEmailVerificationToken(user.id);
+await sendVerificationEmail(email, verificationToken);
+```
+- A short-lived, secure token is generated.
+- An email is sent to the user with a verification link.
+- Users cannot log in until their email is verified.
+
+**Backend (On Verification)**:
+- The `GET /api/auth/verify-email` endpoint receives the token.
+- The token is validated, and the user's `emailVerified` field is set to `true`.
+
+✅ Prevents fake user sign-ups and ensures a valid communication channel.
+
+---
+
+### 7. **Password Reset**
+
+A secure password reset flow is included for users who forget their password.
+
+**Step 1: Forgot Password**
+- User enters their email and submits to `POST /api/auth/forgot-password`.
+- **Backend**:
+  ```ts
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (user) {
+    const resetToken = signPasswordResetToken(user.id);
+    await sendPasswordResetEmail(email, resetToken);
+  }
+  // Always return a generic success message
+  res.json({ message: 'If an account exists, a reset link has been sent.' });
+  ```
+- This prevents attackers from discovering which emails are registered.
+
+**Step 2: Reset Password**
+- The user clicks the link in the email, which leads to a form on the frontend.
+- The form submits the new password and token to `POST /api/auth/reset-password`.
+- **Backend**:
+  ```ts
+  // Verify the password reset token
+  const payload = verifyPasswordResetToken(token);
+  
+  // Hash the new password
+  const passwordHash = await bcrypt.hash(password, 12);
+
+  // Update password and invalidate all existing sessions
+  await prisma.user.update({
+    where: { id: payload.sub },
+    data: {
+      password: passwordHash,
+      tokenVersion: { increment: 1 }, // Invalidates old refresh tokens
+    },
+  });
+  ```
+✅ Invalidating old sessions on password reset is a critical security step to log out any potentially compromised devices.
+
+---
+
 ## 🛠️ Tech Stack Deep Dive
 
 ### Frontend: Angular + Angular Material
-- **Angular 20**: Modern change detection, standalone components, and reactive forms.
+- **Angular 17+**: Modern change detection, standalone components, and reactive forms.
 - **Angular Material**: `mat-card`, `mat-form-field`, `mat-input`, `mat-button` — consistent, accessible UI.
-- **Type Safety**: Services use typed HTTP clients with interceptors.
-- **Route Guards**: `authGuard` protects dashboard routes.
-- **HTTP Interceptors**: Automatic token refresh on 401 responses.
-- **Reactive State**: `BehaviorSubject` for auth state management.
+- **Type Safety**: Services use typed HTTP clients.
+- **Route Guards**: `AuthGuard` protects dashboard routes.
 
-### Backend: Express + TypeScript + Express-Validator
+### Backend: Express + TypeScript + Zod
 - **Express**: Lightweight, flexible, and widely supported.
 - **TypeScript**: Shared types with frontend.
-- **Express-Validator**: Request validation middleware:
-  ```typescript
-  // In authRoutes.ts
-  [
-    body('email').isEmail().withMessage('Valid email required').normalizeEmail(),
-    body('password')
-      .isStrongPassword({ 
-        minLength: 8, 
-        minLowercase: 1, 
-        minUppercase: 1, 
-        minNumbers: 1 
-      })
-      .withMessage('Password must be at least 8 chars with upper, lower, and number')
-  ]
+- **Zod**: Runtime validation for all API inputs:
+  ```ts
+  const loginSchema = z.object({
+    email: z.string().email(),
+    password: z.string().min(6)
+  });
   ```
 - **Prisma ORM**: Type-safe database queries and migrations.
 
 ### Database: PostgreSQL + Prisma
 ```prisma
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
-  password     String
-  name         String?
-  tokenVersion Int      @default(0)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  id       Int      @id @default(autoincrement())
+  email    String   @unique
+  password String
+  tokens   RefreshToken[]
 }
 
-// Token versioning is used to invalidate refresh tokens on logout
-// When a user logs out, tokenVersion is incremented, invalidating all existing refresh tokens
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+}
 ```
 
 ✅ Schema enforces data integrity  
@@ -437,31 +429,21 @@ CREATE DATABASE authdb;
 **`backend/.env`**:
 ```env
 DATABASE_URL="postgresql://postgres:password@localhost:5432/authdb"
-JWT_ACCESS_SECRET=your_strong_jwt_secret_here
+JWT_SECRET=your_strong_jwt_secret_here
 JWT_REFRESH_SECRET=your_strong_refresh_secret_here
-JWT_ACCESS_EXPIRES=15m
-JWT_REFRESH_EXPIRES=7d
-CORS_ORIGIN=http://localhost:4200
-JWT_ACCESS_EXPIRES=15m
-JWT_REFRESH_EXPIRES=7d
-CORS_ORIGIN=http://localhost:4200
 NODE_ENV=development
-PORT=4000
+PORT=5000
 ```
-
-> 🔐 For production, set `NODE_ENV=production` and ensure all secrets are strong and secure.
 
 > 🔐 Use strong, randomly generated values for JWT secrets in production.
 
 **`frontend/src/environments/environment.ts`**:
-```typescript
+```ts
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:4000/api'  // Matches the backend port and API prefix
+  apiUrl: 'http://localhost:5000'
 };
 ```
-
-For development, use `environment.development.ts` which extends this configuration.
 
 ### Step 5: Run Prisma Migrations
 ```bash
@@ -473,20 +455,17 @@ npx prisma generate
 This creates the `User` and `RefreshToken` tables in your database.
 
 ### Step 6: Start Servers
-
-In separate terminals:
-
 ```bash
-# Backend (from backend/ directory)
+# Backend
 npm run dev
 
-# Frontend (from frontend/ directory)
-npm start  # Uses proxy config to forward /api to backend
+# Frontend
+cd ../frontend
+ng serve
 ```
 
 👉 **Frontend**: http://localhost:4200  
-👉 **Backend API**: http://localhost:4000/api  
-👉 **Auth Endpoint**: http://localhost:4000/api/auth/me (protected)
+👉 **Backend API**: http://localhost:5000/api/auth/me (protected)
 
 You can now:
 - Register a new user
@@ -496,19 +475,84 @@ You can now:
 
 ---
 
+## 🐳 Dockerized Development
+
+For an even faster setup, the boilerplate includes a comprehensive Docker configuration that runs the entire stack—frontend, backend, database, and a local email server—with a single command.
+
+### Quick Start with Docker
+
+Instead of setting up a local PostgreSQL instance and managing environment variables manually, you can use the provided helper script.
+
+**Prerequisites**: Docker and Docker Compose installed.
+
+**Start Everything**:
+```bash
+./docker-dev.sh start
+```
+
+This command will:
+- 🐳 Build the Docker images for the frontend and backend.
+- 🚀 Start all services defined in `docker-compose.yml`.
+- 🔗 Connect the backend to the PostgreSQL database and MailDev email server.
+
+Your full development environment is now running:
+- **Frontend**: `http://localhost:3000`
+- **Backend**: `http://localhost:4000`
+- **MailDev (Email Viewer)**: `http://localhost:1080`
+
+### Docker Helper Script (`docker-dev.sh`)
+
+The `docker-dev.sh` script provides several useful commands for managing your development environment:
+
+| Command | Description |
+|---|---|
+| `./docker-dev.sh start` | Starts all services in the foreground. |
+| `./docker-dev.sh start-bg` | Starts all services in the background (detached mode). |
+| `./docker-dev.sh stop` | Stops all running services. |
+| `./docker-dev.sh logs` | Tails the logs from all running services. |
+| `./docker-dev.sh migrate` | Runs Prisma database migrations inside the backend container. |
+| `./docker-dev.sh clean` | Stops and removes all containers, volumes, and networks. |
+| `./docker-dev.sh shell` | Opens a shell inside the running backend container for debugging. |
+
+This Docker setup is perfect for ensuring a consistent and reproducible development environment for your entire team.
+
+---
+
+## ⚙️ Continuous Integration (CI)
+
+To maintain code quality and prevent bugs, the boilerplate comes with pre-configured CI pipelines for both the frontend and backend using **GitHub Actions**.
+
+These workflows are defined in the `.github/workflows/` directory and automatically run on every `push` and `pull_request` to the `main` and `develop` branches.
+
+### Backend CI (`backend-ci.yml`)
+
+The backend pipeline performs the following checks:
+- **Linting**: Enforces a consistent code style with ESLint.
+- **Formatting**: Checks for code formatting issues with Prettier.
+- **Prisma Validation**: Ensures the Prisma schema is valid.
+- **Unit & Integration Tests**: Runs the full test suite using a dedicated test database.
+- **Code Coverage**: Uploads test coverage reports to Codecov to track test quality over time.
+
+### Frontend CI (`frontend-ci.yml`)
+
+The frontend pipeline ensures the application is always in a buildable state:
+- **Linting**: Checks for code quality issues with ESLint.
+- **Building**: Compiles the Angular application to ensure there are no build errors.
+
+This automated setup catches errors early, enforces best practices, and allows you to ship features with confidence.
+
+---
+
 ## 🛡️ Security Best Practices Implemented
 
 | Practice | Implemented? | Why It Matters |
 |--------|--------------|---------------|
 | HTTP-only cookies | ✅ | Prevents XSS token theft |
 | Secure flag | ✅ (in production) | HTTPS-only |
-| SameSite=lax (dev) / none (prod) | ✅ | Balances security and OAuth compatibility |
-| Token Versioning | ✅ | Invalidates all sessions on logout |
-| Helmet | ✅ | Security headers |
-| Rate Limiting | ✅ | Prevents brute force attacks |
+| SameSite=strict | ✅ | Prevents CSRF |
 | bcrypt hashing | ✅ | Secure password storage |
 | Refresh token rotation | ✅ | Prevents replay attacks |
-| Express-Validator | ✅ | Prevents injection and validates input |
+| Zod validation | ✅ | Prevents injection |
 | CORS configured | ✅ | Limits origin access |
 | No localStorage | ✅ | Eliminates XSS risk |
 
@@ -529,15 +573,11 @@ model User { ... role Role @default(USER) }
 ```
 - Add middleware: `requireRole('ADMIN')`
 
-### 3. Add Email Verification
-- Send verification link on registration
-- Add `emailVerified` boolean to `User`
-
-### 4. Add 2FA
+### 3. Add 2FA
 - TOTP (Google Authenticator) or SMS
 - Store `twoFactorSecret` in DB
 
-### 5. Add Audit Logs
+### 4. Add Audit Logs
 - Log login attempts, token refreshes, etc.
 
 ---
@@ -579,6 +619,40 @@ Before deploying:
 | Offline Support | Yes | Partial |
 
 Use this boilerplate if you want **control, clarity, and long-term maintainability**.
+
+---
+
+## ❓ Frequently Asked Questions
+
+### Q: Why use HTTP-only cookies instead of localStorage for JWTs?
+**A:** HTTP-only cookies prevent XSS attacks because they're inaccessible to JavaScript. localStorage can be read by any script, making it vulnerable to token theft.
+
+### Q: How does refresh token rotation work?
+**A:** Each time a refresh token is used, it's deleted and replaced with a new one. This prevents replay attacks and limits the impact of token compromise.
+
+### Q: Can I use this with React or Vue instead of Angular?
+**A:** Yes! The backend is framework-agnostic. You'd need to adapt the frontend authentication logic and guards for your chosen framework.
+
+### Q: How does the password reset functionality work?
+**A:** The boilerplate includes a full password reset flow. A user can request a reset link, which is emailed to them. The link contains a secure, short-lived token. When the user sets a new password, all their other active sessions are automatically logged out for security.
+
+### Q: How do I add role-based access control?
+**A:** Add a `role` field to the User model and create middleware to check user roles before accessing protected routes.
+
+### Q: Is this production-ready?
+**A:** Yes, with proper environment configuration and HTTPS. Follow the production checklist for deployment best practices.
+
+### Q: How do I handle multiple devices/sessions?
+**A:** The current implementation allows multiple sessions. To limit this, store session IDs and implement device management.
+
+### Q: What's the difference between access and refresh tokens?
+**A:** Access tokens are short-lived (15 minutes) for API requests. Refresh tokens are long-lived (7 days) for generating new access tokens.
+
+### Q: How do I add OAuth (Google, GitHub) login?
+**A:** Use Passport.js strategies or @auth/core. Add provider fields to the User model and handle OAuth callbacks.
+
+### Q: Can I deploy this on free hosting?
+**A:** Yes! The frontend can be deployed to Netlify/Vercel, and the backend to Railway/Render. Use cloud databases like Neon or Supabase.
 
 ---
 
