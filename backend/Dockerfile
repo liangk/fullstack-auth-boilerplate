@@ -14,7 +14,9 @@ RUN npm install
 COPY . .
 
 # Generate Prisma Client to ensure it's available for the build
-RUN npx prisma generate
+# Provide a dummy DATABASE_URL to satisfy Prisma validation during build.
+# The real DATABASE_URL will be injected at runtime.
+RUN DATABASE_URL="postgresql://dummy:dummy@dummy:5432/dummy" npx prisma generate
 
 # Build the TypeScript project
 RUN npm run build
