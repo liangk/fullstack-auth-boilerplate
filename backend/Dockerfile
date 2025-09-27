@@ -37,6 +37,10 @@ COPY --from=builder /app/dist ./dist
 # Copy the Prisma schema for runtime migration
 COPY --from=builder /app/prisma ./prisma
 
+# Copy the generated Prisma client from the builder stage
+COPY --from=builder /app/node_modules/@prisma/client ./node_modules/@prisma/client
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+
 # Expose the port the app runs on
 EXPOSE 4000
 
