@@ -25,6 +25,9 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     echo '  exit 1' >> /app/start.sh && \
     echo 'fi' >> /app/start.sh && \
     echo 'echo "Running Prisma migrations..."' >> /app/start.sh && \
+    echo 'echo "Generating Prisma Client..."' >> /app/start.sh && \
+    echo 'npx prisma generate' >> /app/start.sh && \
+    echo 'echo "Running Prisma migrations..."' >> /app/start.sh && \
     echo 'npx prisma migrate deploy' >> /app/start.sh && \
     echo 'echo "Starting application..."' >> /app/start.sh && \
     echo 'node dist/index.js' >> /app/start.sh && \
