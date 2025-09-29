@@ -58,6 +58,14 @@ export async function register(req: Request, res: Response, next: any) {
         where: { id: user.id },
         data: { emailVerified: true },
       });
+      // Issue auth cookies so the user is logged in immediately when skipping verification
+      const dbUser = await prisma.user.findUnique({ where: { id: user.id } });
+      if (dbUser) {
+        const access = signAccessToken(user.id);
+        const refresh = signRefreshToken(user.id, dbUser.tokenVersion);
+        setAccessCookie(res, access);
+        setRefreshCookie(res, refresh);
+      }
     }
 
     res.status(201).json({
@@ -89,7 +97,7 @@ export async function login(req: Request, res: Response, next: any) {
     // Check if email is verified (skip if flag is true)
     if (!SKIP_EMAIL_VERIFICATION && !dbUser.emailVerified) {
       return res.status(403).json({
-        message: 'Please verify your email before logging in',
+        message: 'Please verify your email before logging in or check your email for a verification link.',
         requiresVerification: true,
       });
     }
@@ -225,11 +233,13 @@ export async function resetPassword(req: Request, res: Response, next: any) {
     const passwordHash = await bcrypt.hash(password, 12);
 
     // Update password and increment token version to invalidate all existing tokens
+    // Also mark email as verified since user proved ownership through reset process
     await prisma.user.update({
       where: { id: user.id },
       data: {
         password: passwordHash,
         tokenVersion: { increment: 1 },
+        emailVerified: true, // Mark email as verified after successful password reset
       },
     });
 

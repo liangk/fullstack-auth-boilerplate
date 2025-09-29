@@ -1,17 +1,32 @@
 ---
 title: "Modern Fullstack Authentication Boilerplate: Complete Guide 2025"
-description: "Build secure authentication with Angular, Express, PostgreSQL. Features JWT HTTP-only cookies, refresh token rotation, and TypeScript. Complete starter kit with best practices."
-keywords: "fullstack authentication, Angular Express authentication, JWT HTTP-only cookies, refresh token rotation, TypeScript authentication boilerplate, secure login system, PostgreSQL authentication, Angular Material login"
-date: "2025-09-02"
+pubDate: "2025-09-02"
+heroImage: '../../assets/fullstack-authentication-boilerplate.png'
 author: "Ko-Hsin Liang"
 categories: ["Authentication", "Angular", "Express", "Security", "TypeScript"]
-tags: ["JWT", "HTTP-only cookies", "Prisma", "PostgreSQL", "Angular Material", "refresh tokens"]
+repo: "https://github.com/liangk/fullstack-auth-boilerplate"
+description: "This document outlines a full-stack authentication boilerplate project available on GitHub, designed to provide a robust starting point for web application development. It details a modern tech stack, including Node.js, Express, Prisma (with PostgreSQL), and JWT for the backend, alongside Angular (with Material UI) for the frontend."
+metaDescription: "Learn how to build secure authentication with Angular, Express, PostgreSQL, and JWT in HTTP-only cookies. Complete fullstack boilerplate with refresh token rotation and TypeScript."
+keywords: ["fullstack authentication", "angular express jwt", "http-only cookies", "refresh token rotation", "postgresql prisma", "secure authentication", "typescript boilerplate", "angular material"]
+ogTitle: "Modern Fullstack Authentication Boilerplate: Angular + Express + PostgreSQL"
+ogDescription: "Secure, production-ready authentication starter kit with JWT in HTTP-only cookies, refresh token rotation, and end-to-end TypeScript. No third-party auth services needed."
+ogImage: "/images/fullstack-authentication-boilerplate.png"
+ogType: "article"
+twitterCard: "summary_large_image"
+twitterCreator: "@kohsinliang"
+publishedDate: "2025-09-02T00:00:00Z"
+section: "Web Development"
+tags: ["Authentication", "Angular", "Express", "PostgreSQL", "JWT", "TypeScript", "Security", "HTTP-only cookies", "Prisma", "Angular Material", "refresh tokens"]
+readTime: 12
+wordCount: 2500
+canonicalUrl: "https://stackinsight.dev/blog/fullstack-authentication-boilerplate"
+
 ---
 
 # Modern Fullstack Authentication Boilerplate: A Comprehensive Guide  
 **Secure Angular + Express + PostgreSQL Starter with HTTP-only Cookies**
 
-## 🎯 Quick Summary
+## Quick Summary
 **Problem**: Most authentication tutorials store JWTs in localStorage (vulnerable to XSS attacks)  
 **Solution**: This boilerplate uses HTTP-only cookies with refresh token rotation for maximum security  
 **Result**: Production-ready authentication system you can deploy immediately
@@ -19,7 +34,7 @@ tags: ["JWT", "HTTP-only cookies", "Prisma", "PostgreSQL", "Angular Material", "
 Authentication is one of the most critical—and often most misunderstood—parts of fullstack development. Get it wrong, and your app is vulnerable to XSS, CSRF, token theft, or session hijacking. Get it right, and you've still spent weeks on boilerplate before writing a single business feature.
 
 That's why I built the **[Fullstack Auth Boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)** — a secure, production-ready starter kit using **Angular**, **Express**, **PostgreSQL**, and **Prisma**, with authentication implemented the right way: **JWT in HTTP-only cookies**, refresh token rotation, and end-to-end TypeScript.
-👉 **GitHub Repo**: [https://github.com/liangk/fullstack-auth-boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)
+**GitHub Repo**: [https://github.com/liangk/fullstack-auth-boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)
 
 In this **comprehensive guide**, you'll learn:
 - Why this boilerplate is different from typical starters
@@ -31,35 +46,35 @@ In this **comprehensive guide**, you'll learn:
 
 Whether you're building an admin dashboard, internal tool, or SaaS platform, this guide will help you **build faster and safer**.
 
-## 🎯 What You'll Learn
-- ✅ **Security-first authentication** with HTTP-only cookies
-- ✅ **Complete implementation** from database to UI
-- ✅ **Production deployment** checklist and best practices
-- ✅ **Extension strategies** for OAuth, 2FA, and role-based access
-- ✅ **Performance optimization** techniques
-- ✅ **Common troubleshooting** solutions
+## What You'll Learn
+- **Security-first authentication** with HTTP-only cookies
+- **Complete implementation** from database to UI
+- **Production deployment** checklist and best practices
+- **Extension strategies** for OAuth, 2FA, and role-based access
+- **Performance optimization** techniques
+- **Common troubleshooting** solutions
 
 ---
 
-## 🚀 What Is This Boilerplate?
+## What Is This Boilerplate?
 
 The **Fullstack Auth Boilerplate** is not just another "login form + Express API" starter. It's a thoughtfully designed, secure-by-default foundation that reflects real-world best practices.
 
 It includes:
-- ✅ User registration & login
-- ✅ JWT in **HTTP-only, SameSite cookies** (no localStorage)
-- ✅ Refresh token rotation
-- ✅ Protected routes (frontend and backend)
-- ✅ Type-safe API with **Zod** and **TypeScript**
-- ✅ Clean UI with **Angular Material**
-- ✅ Database modeling with **Prisma ORM**
-- ✅ Automatic token refresh
-- ✅ CORS and environment configuration
-- ✅ bcrypt password hashing
-- ✅ Email verification
-- ✅ Secure password reset
-- ✅ Dockerized for easy setup
-- ✅ CI/CD pipelines for quality assurance
+- User registration & login
+- JWT in **HTTP-only, SameSite cookies** (no localStorage)
+- Refresh token rotation
+- Protected routes (frontend and backend)
+- Type-safe API with **Zod** and **TypeScript**
+- Clean UI with **Angular Material**
+- Database modeling with **Prisma ORM**
+- Automatic token refresh
+- CORS and environment configuration
+- bcrypt password hashing
+- Email verification
+- Secure password reset
+- Dockerized for easy setup
+- CI/CD pipelines for quality assurance
 
 No Firebase. No Auth0. No third-party dependencies for auth.
 
@@ -69,7 +84,7 @@ This is the starter I wish I had when I began building fullstack apps.
 
 ---
 
-## 🔐 Why This Approach? The Problem with Common Auth Patterns
+## Why This Approach? The Problem with Common Auth Patterns
 
 Before we dive in, let's address why this boilerplate **does things differently**—and why those differences matter.
 
@@ -86,9 +101,9 @@ But this is **dangerous** because:
 - If an attacker injects a script (XSS), they can steal the token
 - Once stolen, the attacker can impersonate the user indefinitely
 
-> 🚨 **localStorage is not secure for tokens** — it's a common anti-pattern.
+> **localStorage is not secure for tokens** — it's a common anti-pattern.
 
-### ✅ The Solution: HTTP-only Cookies
+### The Solution: HTTP-only Cookies
 
 This boilerplate uses **HTTP-only cookies** to store JWTs:
 
@@ -97,16 +112,16 @@ Set-Cookie: accessToken=abc123; HttpOnly; Secure; SameSite=Strict
 ```
 
 Benefits:
-- ❌ **Inaccessible to JavaScript** → immune to XSS
-- ✅ Automatically sent with requests
-- ✅ Can be scoped with `Secure` (HTTPS-only) and `SameSite` flags
-- ✅ Supported by all modern browsers
+- **Inaccessible to JavaScript** → immune to XSS
+- Automatically sent with requests
+- Can be scoped with `Secure` (HTTPS-only) and `SameSite` flags
+- Supported by all modern browsers
 
 This is the **industry-standard** way to handle session tokens—used by GitHub, Google, and most security-conscious platforms.
 
 ---
 
-## 🧱 Architecture Overview
+## Architecture Overview
 
 Here's how the system is structured:
 
@@ -134,7 +149,7 @@ Here's how the system is structured:
 
 ---
 
-## 🔐 Deep Dive: How Authentication Works
+## Deep Dive: How Authentication Works
 
 Let's walk through the full authentication lifecycle.
 
@@ -155,7 +170,7 @@ await prisma.user.create({
 - Password is hashed with `bcrypt` (salt + slow hash).
 - User saved to PostgreSQL.
 
-✅ No token returned — user must log in.
+No token returned — user must log in.
 
 ---
 
@@ -194,8 +209,8 @@ res.cookie('accessToken', accessToken, {
 });
 ```
 
-✅ Access token in HTTP-only cookie  
-✅ Refresh token stored in database
+Access token in HTTP-only cookie  
+Refresh token stored in database
 
 ---
 
@@ -228,8 +243,8 @@ export const authenticate = (req, res, next) => {
 };
 ```
 
-✅ Route protection on both sides  
-✅ `/me` endpoint returns current user
+Route protection on both sides  
+`/me` endpoint returns current user
 
 ---
 
@@ -273,8 +288,8 @@ res.cookie('accessToken', newAccessToken, {
 });
 ```
 
-✅ **Refresh token rotation** prevents replay attacks  
-✅ User stays logged in seamlessly
+**Refresh token rotation** prevents replay attacks  
+User stays logged in seamlessly
 
 ---
 
@@ -289,8 +304,8 @@ res.clearCookie('accessToken');
 res.clearCookie('refreshToken');
 ```
 
-✅ Session fully invalidated  
-✅ No lingering tokens
+Session fully invalidated  
+No lingering tokens
 
 ---
 
@@ -312,7 +327,7 @@ await sendVerificationEmail(email, verificationToken);
 - The `GET /api/auth/verify-email` endpoint receives the token.
 - The token is validated, and the user's `emailVerified` field is set to `true`.
 
-✅ Prevents fake user sign-ups and ensures a valid communication channel.
+Prevents fake user sign-ups and ensures a valid communication channel.
 
 ---
 
@@ -354,11 +369,11 @@ A secure password reset flow is included for users who forget their password.
     },
   });
   ```
-✅ Invalidating old sessions on password reset is a critical security step to log out any potentially compromised devices.
+Invalidating old sessions on password reset is a critical security step to log out any potentially compromised devices.
 
 ---
 
-## 🛠️ Tech Stack Deep Dive
+## Tech Stack Deep Dive
 
 ### Frontend: Angular + Angular Material
 - **Angular 17+**: Modern change detection, standalone components, and reactive forms.
@@ -396,12 +411,12 @@ model RefreshToken {
 }
 ```
 
-✅ Schema enforces data integrity  
-✅ Prisma Migrate handles versioning
+Schema enforces data integrity  
+Prisma Migrate handles versioning
 
 ---
 
-## 🚦 How to Run It Locally
+## How to Run It Locally
 
 ### Step 1: Clone the Repo
 ```bash
@@ -435,7 +450,7 @@ NODE_ENV=development
 PORT=5000
 ```
 
-> 🔐 Use strong, randomly generated values for JWT secrets in production.
+> Use strong, randomly generated values for JWT secrets in production.
 
 **`frontend/src/environments/environment.ts`**:
 ```ts
@@ -464,8 +479,8 @@ cd ../frontend
 ng serve
 ```
 
-👉 **Frontend**: http://localhost:4200  
-👉 **Backend API**: http://localhost:5000/api/auth/me (protected)
+**Frontend**: http://localhost:4200  
+**Backend API**: http://localhost:5000/api/auth/me (protected)
 
 You can now:
 - Register a new user
@@ -475,7 +490,7 @@ You can now:
 
 ---
 
-## 🐳 Dockerized Development
+## Dockerized Development
 
 For an even faster setup, the boilerplate includes a comprehensive Docker configuration that runs the entire stack—frontend, backend, database, and a local email server—with a single command.
 
@@ -491,9 +506,9 @@ Instead of setting up a local PostgreSQL instance and managing environment varia
 ```
 
 This command will:
-- 🐳 Build the Docker images for the frontend and backend.
-- 🚀 Start all services defined in `docker-compose.yml`.
-- 🔗 Connect the backend to the PostgreSQL database and MailDev email server.
+- Build the Docker images for the frontend and backend.
+- Start all services defined in `docker-compose.yml`.
+- Connect the backend to the PostgreSQL database and MailDev email server.
 
 Your full development environment is now running:
 - **Frontend**: `http://localhost:3000`
@@ -543,22 +558,22 @@ This automated setup catches errors early, enforces best practices, and allows y
 
 ---
 
-## 🛡️ Security Best Practices Implemented
+## Security Best Practices Implemented
 
 | Practice | Implemented? | Why It Matters |
 |--------|--------------|---------------|
-| HTTP-only cookies | ✅ | Prevents XSS token theft |
-| Secure flag | ✅ (in production) | HTTPS-only |
-| SameSite=strict | ✅ | Prevents CSRF |
-| bcrypt hashing | ✅ | Secure password storage |
-| Refresh token rotation | ✅ | Prevents replay attacks |
-| Zod validation | ✅ | Prevents injection |
-| CORS configured | ✅ | Limits origin access |
-| No localStorage | ✅ | Eliminates XSS risk |
+| HTTP-only cookies | Yes | Prevents XSS token theft |
+| Secure flag | Yes (in production) | HTTPS-only |
+| SameSite=strict | Yes | Prevents CSRF |
+| bcrypt hashing | Yes | Secure password storage |
+| Refresh token rotation | Yes | Prevents replay attacks |
+| Zod validation | Yes | Prevents injection |
+| CORS configured | Yes | Limits origin access |
+| No localStorage | Yes | Eliminates XSS risk |
 
 ---
 
-## 🚀 How to Extend This Boilerplate
+## How to Extend This Boilerplate
 
 This is a **starter**, not a final product. Here's how to build on it:
 
@@ -582,7 +597,7 @@ model User { ... role Role @default(USER) }
 
 ---
 
-## 🧰 Troubleshooting Tips
+## Troubleshooting Tips
 
 | Issue | Solution |
 |------|---------|
@@ -594,20 +609,20 @@ model User { ... role Role @default(USER) }
 
 ---
 
-## 📦 Production Checklist
+## Production Checklist
 
 Before deploying:
-- 🔐 Use HTTPS (e.g., Let's Encrypt)
-- 🗝️ Generate strong JWT secrets (use `openssl rand -base64 32`)
-- 🌐 Set `secure: true` in cookie options
-- 🧹 Run `npx prisma migrate deploy` in production
-- 🐳 Use PM2, Docker, or a PaaS (Render, Railway, AWS, etc.)
-- 🔄 Set up monitoring and logging
-- 🧼 Never commit `.env` files to Git
+- Use HTTPS (e.g., Let's Encrypt)
+- Generate strong JWT secrets (use `openssl rand -base64 32`)
+- Set `secure: true` in cookie options
+- Run `npx prisma migrate deploy` in production
+- Use PM2, Docker, or a PaaS (Render, Railway, AWS, etc.)
+- Set up monitoring and logging
+- Never commit `.env` files to Git
 
 ---
 
-## 🌟 Why This Over Auth0 or Firebase?
+## Why This Over Auth0 or Firebase?
 
 | Factor | This Boilerplate | Auth0/Firebase |
 |-------|------------------|----------------|
@@ -656,19 +671,19 @@ Use this boilerplate if you want **control, clarity, and long-term maintainabili
 
 ---
 
-## 🤝 Contribute & Feedback
+## Contribute & Feedback
 
 This project is open source (MIT licensed). I welcome your help!
 
-- 🐛 Report bugs: [GitHub Issues](https://github.com/liangk/fullstack-auth-boilerplate/issues)
-- 💡 Suggest features: OAuth, dark mode, audit logs
-- 🛠️ Submit PRs: UI improvements, security hardening, docs
+- Report bugs: [GitHub Issues](https://github.com/liangk/fullstack-auth-boilerplate/issues)
+- Suggest features: OAuth, dark mode, audit logs
+- Submit PRs: UI improvements, security hardening, docs
 
 I'd love to see what you build with it!
 
 ---
 
-## 📣 Final Thoughts
+## Final Thoughts
 
 Authentication doesn't have to be a bottleneck. With the **[Fullstack Auth Boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)**, you get a secure, modern, and well-documented foundation that handles the hard parts — so you can focus on building what makes your app unique.
 
@@ -676,9 +691,9 @@ It's minimal, but not minimalistic.
 Secure, but not complex.  
 Built for developers who value **control**, **clarity**, and **correctness**.
 
-👉 **Get started today**: [https://github.com/liangk/fullstack-auth-boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)
+**Get started today**: [https://github.com/liangk/fullstack-auth-boilerplate](https://github.com/liangk/fullstack-auth-boilerplate)
 
-⭐ Star it, use it, and tag me — I'd love to see your projects!
+Star it, use it, and tag me — I'd love to see your projects!
 
 ---
 
@@ -689,5 +704,5 @@ Built for developers who value **control**, **clarity**, and **correctness**.
 
 ---
 
-### 👉 Enjoyed this guide?  
+### Enjoyed this guide?  
 Clap, share, and follow for more fullstack deep dives, security tips, and Angular/Node.js guides.

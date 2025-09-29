@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { MaterialModule } from '../material.module';
-import { FieldDto, LiteSnackbarService, LiteInput, LitePassword } from 'ngx-lite-form';
+import { FieldDto, LiteInput, LitePassword } from 'ngx-lite-form';
 
 @Component({
   selector: 'app-login',
@@ -22,6 +22,9 @@ import { FieldDto, LiteSnackbarService, LiteInput, LitePassword } from 'ngx-lite
             <a routerLink="/register">Register</a>
           </div>
         </div>
+        @if (errorMessage) {
+          <div class="error-message">{{ errorMessage }}</div>
+        }
       </form>
     </div>
   `,
@@ -31,7 +34,7 @@ export class LoginPage {
   private fb = inject(FormBuilder);
   private auth = inject(AuthService);
   private router = inject(Router);
-  private snackbar = inject(LiteSnackbarService)
+  // private snackbar = inject(LiteSnackbarService)
 
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
@@ -39,6 +42,7 @@ export class LoginPage {
   });
   email: FieldDto = {label: 'Email', formControl: this.form.get('email') as FormControl};
   password: FieldDto = {label: 'Password', formControl: this.form.get('password') as FormControl};
+  errorMessage = '';
 
   loading = false;
 
@@ -47,12 +51,11 @@ export class LoginPage {
     this.loading = true;
     this.auth.login(this.form.value as any).subscribe({
       next: () => {
-        this.snackbar.show('Logged in successfully', 'done', 3000);
         this.router.navigateByUrl('/');
       },
       error: (e) => {
         const msg = e?.error?.message || 'Login failed';
-        this.snackbar.show(msg, 'error', 3500);
+        this.errorMessage = msg;
       }
     }).add(() => this.loading = false);
   }
