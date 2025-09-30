@@ -5,7 +5,6 @@ import { AuthService } from '../services/auth.service';
 import { MaterialModule } from '../material.module';
 import { FieldDto, LiteInput, LitePassword, LiteSnackbarService } from 'ngx-lite-form';
 import { RegisterResponse } from '../models/auth';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-register',
@@ -44,7 +43,6 @@ export class RegisterPage {
   onSubmit() {
     if (this.form.invalid) return;
     this.loading = true;
-    console.log(environment.apiUrl);
     this.auth.register(this.form.value as any).subscribe({
       next: (response: RegisterResponse) => {
         this.snack.show(response.message, 'done', 2500);
