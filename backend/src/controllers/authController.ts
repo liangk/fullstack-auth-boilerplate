@@ -97,7 +97,8 @@ export async function login(req: Request, res: Response, next: any) {
     // Check if email is verified (skip if flag is true)
     if (!SKIP_EMAIL_VERIFICATION && !dbUser.emailVerified) {
       return res.status(403).json({
-        message: 'Please verify your email before logging in or check your email for a verification link.',
+        message:
+          'Please verify your email before logging in or check your email for a verification link.',
         requiresVerification: true,
       });
     }
