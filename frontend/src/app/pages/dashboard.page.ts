@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MaterialModule } from '../material.module';
 import { AuthService } from '../services/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,4 +17,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class DashboardPage {
   auth = inject(AuthService);
+  constructor() {
+    console.log(environment.apiUrl);
+  }
 }
