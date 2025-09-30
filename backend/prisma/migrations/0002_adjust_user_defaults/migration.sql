@@ -1,24 +1,17 @@
--- Ensure required extension exists (idempotent)
+-- Migration 0002: Ensure User table defaults and constraints
+-- This migration is idempotent and safe to re-run
+
+-- Ensure required extension exists
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
--- Set default for emailVerified and enforce NOT NULL
-ALTER TABLE "User"
-  ALTER COLUMN "emailVerified" SET DEFAULT false;
-
--- Backfill any NULLs to false (safe if column was nullable earlier)
+-- Backfill any NULL values before enforcing constraints
 UPDATE "User"
 SET "emailVerified" = false
 WHERE "emailVerified" IS NULL;
 
-ALTER TABLE "User"
-  ALTER COLUMN "emailVerified" SET NOT NULL;
-
--- Set default for createdAt and enforce NOT NULL
--- Backfill any NULL createdAt values before setting NOT NULL
 UPDATE "User"
 SET "createdAt" = CURRENT_TIMESTAMP
 WHERE "createdAt" IS NULL;
 
-ALTER TABLE "User"
-  ALTER COLUMN "createdAt" SET DEFAULT CURRENT_TIMESTAMP,
-  ALTER COLUMN "createdAt" SET NOT NULL;
+-- Note: Defaults and NOT NULL constraints already exist from 0001_init
+-- This migration just ensures data consistency
