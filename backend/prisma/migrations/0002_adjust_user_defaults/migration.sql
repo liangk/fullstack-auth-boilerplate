@@ -14,6 +14,11 @@ ALTER TABLE "User"
   ALTER COLUMN "emailVerified" SET NOT NULL;
 
 -- Set default for createdAt and enforce NOT NULL
+-- Backfill any NULL createdAt values before setting NOT NULL
+UPDATE "User"
+SET "createdAt" = CURRENT_TIMESTAMP
+WHERE "createdAt" IS NULL;
+
 ALTER TABLE "User"
   ALTER COLUMN "createdAt" SET DEFAULT CURRENT_TIMESTAMP,
   ALTER COLUMN "createdAt" SET NOT NULL;
