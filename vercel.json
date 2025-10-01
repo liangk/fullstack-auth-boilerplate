@@ -1,0 +1,10 @@
+{
+  "buildCommand": "cd frontend && npm run build",
+  "outputDirectory": "frontend/dist/frontend",
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://fullstack-auth-boilerplate-frontend.onrender.com/api/:path*"
+    }
+  ]
+}
