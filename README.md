@@ -1,5 +1,6 @@
 # Fullstack Auth Boilerplate
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-brightgreen?style=flat&logo=vercel)](https://fullstack-auth-boilerplate.vercel.app/)
 [![Backend CI](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml)
 [![Frontend CI](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/frontend-ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -16,6 +17,7 @@ This project implements authentication the right way: using **JWTs stored in sec
 - **Refresh Token Rotation**: Automatically rotates refresh tokens to prevent replay attacks.
 - **Email Verification**: New user accounts must be verified via a secure email link.
 - **Password Reset Flow**: Secure, token-based password reset that invalidates old sessions.
+- **Loading Indicators**: Beautiful loading spinners during authentication requests for better UX.
 - **Dockerized Development**: One-command setup with Docker Compose for all services (Postgres, MailDev, Backend, Frontend).
 - **CI/CD Ready**: GitHub Actions workflows for automated linting, testing, and building.
 - **Security Hardening**: Includes Helmet, CORS, rate limiting, and input validation.
@@ -27,8 +29,9 @@ This project implements authentication the right way: using **JWTs stored in sec
 | Area     | Technology                                                                                                  |
 | :------- | :---------------------------------------------------------------------------------------------------------- |
 | **Backend**  | [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [Prisma](https://www.prisma.io/), [PostgreSQL](https://www.postgresql.org/), [JWT](https://jwt.io/), [TypeScript](https://www.typescriptlang.org/) |
-| **Frontend** | [Angular](https://angular.io/), [Angular Material](https://material.angular.io/), [RxJS](https://rxjs.dev/), [SCSS](https://sass-lang.com/), [TypeScript](https://www.typescriptlang.org/)      |
-| **DevOps**   | [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/), [GitHub Actions](https://github.com/features/actions)                               |
+| **Frontend** | [Angular 20](https://angular.io/), [Angular Material](https://material.angular.io/), [RxJS](https://rxjs.dev/), [SCSS](https://sass-lang.com/), [TypeScript](https://www.typescriptlang.org/), [ngx-lite-form](https://www.npmjs.com/package/ngx-lite-form) |
+| **DevOps**   | [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/), [GitHub Actions](https://github.com/features/actions) |
+| **Deployment** | [Vercel](https://vercel.com) (Frontend), [Render](https://render.com) (Backend), [Neon](https://neon.tech) (Database) |
 
 ## Getting Started
 
@@ -184,6 +187,26 @@ frontend/
 
 </details>
 
+## Deployment
+
+This project is deployed using a modern, scalable architecture:
+
+- **Frontend**: [Vercel](https://vercel.com) - Global CDN with automatic deployments
+- **Backend**: [Render.com](https://render.com) - Dockerized Node.js with auto-deploy
+- **Database**: [Neon.tech](https://neon.tech) - Serverless PostgreSQL with branching
+
+**Live Demo**: [https://fullstack-auth-boilerplate.vercel.app/](https://fullstack-auth-boilerplate.vercel.app/)
+
+### Key Architecture Features
+
+- **Vercel Proxy**: Frontend proxies `/api/*` requests to backend, solving cross-origin cookie issues
+- **HTTP-only Cookies**: Secure authentication with `SameSite=Lax` (enabled by proxy)
+- **Automatic Migrations**: Prisma migrations run on every backend deploy
+- **Database Visibility**: Neon provides SQL editor and table browser on free tier
+- **Zero-Downtime Deploys**: Git push triggers automatic deployment to all services
+
+For detailed deployment guide, see [deploy-fullstack-app-real-story](https://stackinsight.dev/blog/deploy-fullstack-app-real-story/) which documents the real journey including platform migrations and troubleshooting.
+
 ## CI/CD Pipeline
 
 This project uses **GitHub Actions** for continuous integration. Workflows are defined in the `.github/workflows` directory and run automatically on pushes and pull requests to the `main` and `develop` branches.
@@ -214,11 +237,12 @@ This project uses **GitHub Actions** for continuous integration. Workflows are d
 
 This boilerplate is built with a security-first mindset.
 
-- **Secure Cookies**: JWTs are stored in `HttpOnly`, `Secure` (in production), and `SameSite` cookies.
-- **Password Hashing**: Passwords are hashed using `bcrypt`.
+- **Secure Cookies**: JWTs are stored in `HttpOnly`, `Secure` (in production), and `SameSite=Lax` cookies. The Vercel proxy makes cross-origin requests appear same-origin, allowing secure cookie handling without complex CORS configurations.
+- **Password Hashing**: Passwords are hashed using `bcrypt` with salt rounds.
 - **API Protection**: Includes rate limiting, Helmet for security headers, and strict CORS policies.
-- **Input Validation**: All API inputs are validated to prevent injection attacks.
+- **Input Validation**: All API inputs are validated with express-validator to prevent injection attacks.
 - **Session Invalidation**: Password resets automatically invalidate all other active sessions.
+- **Refresh Token Rotation**: Refresh tokens are rotated on each use to prevent replay attacks.
 
 </details>
 
