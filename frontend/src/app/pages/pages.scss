@@ -2,7 +2,7 @@
 .dashboard_content { flex: 1; padding: 20px; display: flex; flex-direction: column; margin: 20px auto; padding: 20px; width: 1000px; background: #fff; border-radius: 10px;
   .title2 { font-size: 24px; font-weight: 500; margin-bottom: 16px; }
 }
-.login_content, .register_content { padding: 30px; display: flex; flex-direction: column; margin: auto; padding: 20px; width: 480px; background: #fff; border-radius: 10px; flex: 0;
+.login_content, .register_content { padding: 30px; display: flex; flex-direction: column; margin: auto; padding: 20px; width: 480px; background: #fff; border-radius: 10px; flex: 0; position: relative;
   .title2 { font-size: 24px; font-weight: 500; margin-bottom: 16px; text-align: center; }
   form { margin: auto; width: 320px; display: flex; flex-direction: column; gap: 10px; }
   .actions { display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -11,6 +11,20 @@
     background-color: #fce4e4; color: #c00; border: 1px solid #fcc2c3; padding: 12px 20px;
     margin: 15px 0; font-size: 14px; line-height: 1.4; font-weight: 500;
     border-radius: 4px; opacity: 0; animation: fadeIn 0.3s forwards;
+  }
+  .loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-in;
   }
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
