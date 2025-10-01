@@ -32,10 +32,7 @@ const corsOptions: CorsOptions = {
 app.set('trust proxy', 1);
 
 // Security and parsers
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: 'cross-origin' },
-  crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
-}));
+app.use(helmet());
 app.use(cors(corsOptions));
 app.use(logger);
 app.use(express.json({ limit: '1mb' }));

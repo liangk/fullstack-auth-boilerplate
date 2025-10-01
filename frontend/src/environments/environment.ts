@@ -1,4 +1,6 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://fullstack-auth-boilerplate-frontend.onrender.com/api'
+  // Uses Vercel proxy to backend (see vercel.json)
+  // This makes cookies same-origin, avoiding SameSite=None issues
+  apiUrl: '/api'
 };

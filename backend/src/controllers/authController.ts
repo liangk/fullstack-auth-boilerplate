@@ -23,7 +23,7 @@ function setAccessCookie(res: Response, token: string) {
   res.cookie(ACCESS_TOKEN_COOKIE, token, {
     httpOnly: true,
     secure: IS_PROD,
-    sameSite: IS_PROD ? 'none' : 'lax',
+    sameSite: 'lax', // Use 'lax' since Vercel proxies requests (same-origin)
     maxAge: 15 * 60 * 1000, // 15 minutes
     path: '/',
   });
@@ -33,7 +33,7 @@ function setRefreshCookie(res: Response, token: string) {
   res.cookie(REFRESH_TOKEN_COOKIE, token, {
     httpOnly: true,
     secure: IS_PROD,
-    sameSite: IS_PROD ? 'none' : 'lax',
+    sameSite: 'lax', // Use 'lax' since Vercel proxies requests (same-origin)
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/',
   });
