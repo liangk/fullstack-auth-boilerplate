@@ -34,11 +34,11 @@ services:
       dockerfile: Dockerfile
     container_name: auth-boilerplate-backend
     ports:
-      - "4000:4000"
+      - "4005:4005"
     environment:
       NODE_ENV: development
-      PORT: 4000
-      CORS_ORIGIN: http://localhost:3000
+      PORT: 4005
+      CORS_ORIGIN: http://localhost:4205
       DATABASE_URL: postgresql://postgres:password@postgres:5432/auth_boilerplate?schema=public
       SMTP_HOST: maildev
       SMTP_PORT: 1025
@@ -71,7 +71,7 @@ services:
       dockerfile: Dockerfile
     container_name: auth-boilerplate-frontend
     ports:
-      - "3000:80"
+      - "4205:80"
     environment:
       NODE_ENV: development
     depends_on:

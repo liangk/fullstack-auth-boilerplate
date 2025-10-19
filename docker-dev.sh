@@ -76,8 +76,8 @@ case "$1" in
         echo "  help       - Show this help message"
         echo ""
         echo "Services:"
-        echo "  Frontend:  http://localhost:3000"
-        echo "  Backend:   http://localhost:4000"
+        echo "  Frontend:  http://localhost:4205"
+        echo "  Backend:   http://localhost:4005"
         echo "  MailDev:   http://localhost:1080"
         echo "  Database:  localhost:5432"
         ;;

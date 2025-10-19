@@ -5,12 +5,13 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { apiLimiter } from './middleware/rateLimiter';
 import authRoutes from './routes/authRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
 import healthRoutes from './routes/health';
 import { errorHandler } from './middleware/errorHandler';
 import { logger } from './middleware/logger';
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '4000', 10);
+const PORT = parseInt(process.env.PORT || '4005', 10);
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
 // CORS setup
@@ -44,6 +45,7 @@ app.use('/api', apiLimiter);
 // Routes
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 // Also expose non-API prefixed auth routes to match requested paths
 app.use('/auth', authRoutes);
 

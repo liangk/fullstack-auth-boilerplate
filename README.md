@@ -67,8 +67,8 @@ This single command will:
 
 Your full development environment is now running and accessible:
 
-- **Frontend Application**: [http://localhost:3000](http://localhost:3000)
-- **Backend API**: `http://localhost:4000`
+- **Frontend Application**: [http://localhost:4205](http://localhost:4205)
+- **Backend API**: `http://localhost:4005`
 - **MailDev (Email Viewer)**: [http://localhost:1080](http://localhost:1080)
 - **PostgreSQL Database**: `localhost:5432`
 
@@ -132,9 +132,9 @@ The backend requires the following environment variables, which should be define
 
 | Variable                      | Description                                                                                                 | Default / Example                                    |
 | :---------------------------- | :---------------------------------------------------------------------------------------------------------- | :--------------------------------------------------- |
-| `PORT`                        | The port on which the backend server will run.                                                              | `4000`                                               |
+| `PORT`                        | The port on which the backend server will run.                                                              | `4005`                                               |
 | `NODE_ENV`                    | The application environment. Set to `production` in production.                                             | `development`                                        |
-| `CORS_ORIGIN`                 | The URL of the frontend application for CORS policy.                                                        | `http://localhost:3000`                              |
+| `CORS_ORIGIN`                 | The URL of the frontend application for CORS policy.                                                        | `http://localhost:4205`                              |
 | `DATABASE_URL`                | The connection string for your PostgreSQL database.                                                         | `postgresql://USER:PASS@HOST:PORT/DB`                |
 | `JWT_ACCESS_SECRET`           | **(Required)** A strong, random secret for signing access tokens.                                           | `replace_me_with_a_strong_access_secret`             |
 | `JWT_ACCESS_EXPIRES`          | The expiration time for access tokens.                                                                      | `15m`                                                |

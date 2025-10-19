@@ -37,7 +37,7 @@ RUN echo '#!/bin/sh' > /app/start.sh && \
     chmod +x /app/start.sh
 
 # Expose port
-EXPOSE 4000
+EXPOSE 4005
 
 # Use the startup script
 CMD ["/app/start.sh"]

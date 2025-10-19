@@ -1,0 +1,16 @@
+---
+import Layout from '../../layouts/BlogPost.astro';
+---
+
+<Layout title="Message sent" description="Thanks for getting in touch">
+	<section class="thanks">
+		<h2>Thank you!</h2>
+		<p>Your message has been sent successfully. We'll get back to you soon.</p>
+		<p><a href="/">Return to home</a></p>
+	</section>
+	<style>
+		.thanks { text-align: center; padding: 2rem 0; }
+		.thanks a { color: rgb(var(--accent)); text-decoration: none; }
+		.thanks a:hover { text-decoration: underline; }
+	</style>
+</Layout>

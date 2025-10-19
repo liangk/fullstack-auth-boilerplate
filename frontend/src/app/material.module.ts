@@ -9,13 +9,17 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { CommonModule } from '@angular/common';
 
 const MaterialModules = [
   CommonModule,
   MatButtonModule, MatCardModule, MatIconModule, MatProgressSpinnerModule, MatProgressBarModule,
   MatFormFieldModule, MatInputModule,
-  MatSnackBarModule
+  MatSnackBarModule, MatTableModule, MatChipsModule, MatDividerModule, MatTooltipModule
 ];
 
 @NgModule({

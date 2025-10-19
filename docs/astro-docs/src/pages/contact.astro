@@ -1,0 +1,39 @@
+---
+import Layout from '../layouts/BlogPost.astro';
+---
+
+<Layout
+	title="Contact"
+	description="Get in touch"
+>
+	<section class="form-container">
+		<form name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" action="/contact/success">
+			<input type="hidden" name="form-name" value="contact" />
+			<p class="hidden">
+				<label>Don’t fill this out: <input name="bot-field" /></label>
+			</p>
+			<div class="form-group">
+				<label for="name">Name</label>
+				<input id="name" name="name" type="text" required />
+			</div>
+			<div class="form-group">
+				<label for="email">Email</label>
+				<input id="email" name="email" type="email" required />
+			</div>
+			<div class="form-group">
+				<label for="message">Message</label>
+				<textarea id="message" name="message" rows="6" required></textarea>
+			</div>
+			<div data-netlify-recaptcha="true"></div>
+			<button type="submit" class="btn">Send</button>
+		</form>
+	</section>
+	<style>
+		.hidden { position: absolute; left: -10000px; }
+		.form-container { display: block; }
+		.form-group { margin: 0.75rem 0; display: flex; flex-direction: column; gap: 0.25rem; }
+		input, textarea { padding: 0.6rem 0.75rem; border: 1px solid #e2e8f0; border-radius: 8px; font: inherit; box-sizing: border-box; }
+		button.btn { margin-top: 0.75rem; padding: 0.6rem 1rem; border-radius: 8px; background: var(--accent); border: none; cursor: pointer; color: #fff; float: right; }
+		button.btn:hover { filter: brightness(0.95); }
+	</style>
+</Layout>
