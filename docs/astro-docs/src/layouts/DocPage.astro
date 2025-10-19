@@ -1,0 +1,57 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+
+interface Props {
+	title?: string;
+}
+
+const { title } = Astro.props;
+---
+
+<html lang="en">
+	<head>
+		<BaseHead title={title || 'Documentation'} />
+	</head>
+
+	<body>
+		<Header />
+		<main>
+			<article>
+				<div class="prose">
+					<header class="doc-header">
+						{title && <h1>{title}</h1>}
+					</header>
+					<slot />
+				</div>
+			</article>
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style lang="scss">
+	main { width: calc(100% - 2em); max-width: 100%; margin: 0; flex: 1; background-color: #fff; }
+	.prose { width: 900px; max-width: calc(100% - 2em); margin: auto; padding: 2em 1em; color: rgb(var(--gray-dark)); line-height: 1.6;
+		h1 { margin-top: 0; margin-bottom: 1em; color: #1a1a1a; border-bottom: 2px solid #e0e0e0; padding-bottom: 0.3em; }
+		h2 { margin-top: 1.5em; margin-bottom: 0.5em; color: #333; }
+		h3 { margin-top: 1.2em; margin-bottom: 0.4em; color: #555; }
+		p { margin-bottom: 1em; }
+		code { background: #f5f5f5; padding: 0.2em 0.4em; border-radius: 3px; font-size: 0.9em; }
+		pre { background: #f5f5f5; padding: 1em; border-radius: 5px; overflow-x: auto; margin-bottom: 1em;
+			code { background: none; padding: 0; }
+		}
+		ul, ol { margin-bottom: 1em; padding-left: 2em; }
+		li { margin-bottom: 0.5em; }
+		a { color: var(--accent); text-decoration: none;
+			&:hover { text-decoration: underline; }
+		}
+		blockquote { border-left: 4px solid #e0e0e0; padding-left: 1em; margin-left: 0; color: #666; font-style: italic; }
+		table { width: 100%; border-collapse: collapse; margin-bottom: 1em;
+			th, td { border: 1px solid #e0e0e0; padding: 0.5em; text-align: left; }
+			th { background: #f5f5f5; font-weight: bold; }
+		}
+	}
+	.doc-header { text-align: left; margin-bottom: 2em; }
+</style>
