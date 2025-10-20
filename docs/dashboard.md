@@ -1,6 +1,6 @@
 # Dashboard Guide
 
-Complete guide to the admin dashboard functionality in the Fullstack Auth Boilerplate.
+Complete guide to the admin dashboard functionality in the StackInsight Auth Lite.
 
 ## Overview
 

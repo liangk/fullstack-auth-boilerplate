@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide will help you get the Fullstack Auth Boilerplate up and running on your local machine in just a few minutes.
+This guide will help you get the StackInsight Auth Lite up and running on your local machine in just a few minutes.
 
 ## Prerequisites
 

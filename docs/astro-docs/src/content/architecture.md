@@ -1,6 +1,6 @@
 # Architecture Overview
 
-This document provides a comprehensive overview of the Fullstack Auth Boilerplate architecture.
+This document provides a comprehensive overview of the StackInsight Auth Lite architecture.
 
 ## System Architecture
 

@@ -1,6 +1,6 @@
 # Features
 
-Complete list of features and capabilities in the Fullstack Auth Boilerplate.
+Complete list of features and capabilities in the StackInsight Auth Lite.
 
 ## 🔐 Authentication & Security
 
