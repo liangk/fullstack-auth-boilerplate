@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'http://api-lite.stackinsight.app/api'
+  apiUrl: 'https://fullstack-auth-boilerplate-production.up.railway.app/api'
 };
