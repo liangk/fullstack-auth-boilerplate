@@ -1,6 +1,6 @@
 # Environment Configuration
 
-Complete guide to configuring environment variables for the Fullstack Auth Boilerplate.
+Complete guide to configuring environment variables for the StackInsight Auth Lite.
 
 ## Overview
 

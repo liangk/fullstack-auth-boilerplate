@@ -1,6 +1,6 @@
-# Fullstack Auth Boilerplate Documentation
+# StackInsight Auth Lite Documentation
 
-Welcome to the comprehensive documentation for the Fullstack Auth Boilerplate project. This documentation will guide you through every aspect of the project, from setup to deployment.
+Welcome to the comprehensive documentation for the StackInsight Auth Lite project. This documentation will guide you through every aspect of the project, from setup to deployment.
 
 ## 📚 Documentation Index
 

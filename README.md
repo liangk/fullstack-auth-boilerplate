@@ -1,4 +1,4 @@
-# Fullstack Auth Boilerplate
+# StackInsight Auth Lite
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-brightgreen?style=flat&logo=vercel)](https://fullstack-auth-boilerplate.vercel.app/)
 [![Backend CI](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml)
