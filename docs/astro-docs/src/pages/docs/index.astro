@@ -7,8 +7,10 @@ const menuStructure = [
 	{
 		category: 'Getting Started',
 		items: [
-			{ title: 'Introduction', slug: 'README' },
+			{ title: 'Introduction', slug: 'readme' },
 			{ title: 'Quick Start', slug: 'getting-started' },
+			{ title: 'Installation', slug: 'installation' },
+			{ title: 'Environment Configuration', slug: 'environment-configuration' },
 		]
 	},
 	{
@@ -17,20 +19,79 @@ const menuStructure = [
 			{ title: 'Architecture Overview', slug: 'architecture' },
 			{ title: 'Authentication Flow', slug: 'authentication-flow' },
 			{ title: 'Features', slug: 'features' },
+			{ title: 'Security Best Practices', slug: 'security' },
 		]
 	},
 	{
-		category: 'Guides',
+		category: 'API Documentation',
 		items: [
-			{ title: 'Dashboard', slug: 'dashboard' },
-			{ title: 'Environment Configuration', slug: 'environment-configuration' },
+			{ title: 'API Reference', slug: 'api-reference' },
+			{ title: 'Authentication Endpoints', slug: 'api-auth' },
+			{ title: 'Dashboard Endpoints', slug: 'api-dashboard' },
+			{ title: 'Error Handling', slug: 'error-handling' },
+		]
+	},
+	{
+		category: 'Frontend',
+		items: [
+			{ title: 'Frontend Architecture', slug: 'frontend-architecture' },
+			{ title: 'Components Guide', slug: 'components' },
+			{ title: 'Services Guide', slug: 'services' },
+			{ title: 'Guards & Interceptors', slug: 'guards-interceptors' },
+			{ title: 'Dashboard Guide', slug: 'dashboard' },
+		]
+	},
+	{
+		category: 'Backend',
+		items: [
+			{ title: 'Backend Architecture', slug: 'backend-architecture' },
+			{ title: 'Controllers', slug: 'controllers' },
+			{ title: 'Middleware', slug: 'middleware' },
+			{ title: 'Database Schema', slug: 'database-schema' },
+			{ title: 'Email Service', slug: 'email-service' },
+		]
+	},
+	{
+		category: 'Development',
+		items: [
+			{ title: 'Development Guide', slug: 'development' },
+			{ title: 'Testing Guide', slug: 'testing' },
+			{ title: 'Code Style Guide', slug: 'code-style' },
+			{ title: 'Docker Guide', slug: 'docker' },
+		]
+	},
+	{
+		category: 'Deployment',
+		items: [
+			{ title: 'Deployment Overview', slug: 'deployment' },
+			{ title: 'Environment Variables (Production)', slug: 'deploy-environment' },
+			{ title: 'Vercel Deployment', slug: 'deploy-vercel' },
+		]
+	},
+	{
+		category: 'Advanced Topics',
+		items: [
+			{ title: 'Custom Authentication Strategies', slug: 'custom-auth' },
+			{ title: 'Role-Based Access Control', slug: 'rbac' },
+			{ title: 'API Rate Limiting', slug: 'rate-limiting' },
+			{ title: 'Monitoring & Logging', slug: 'monitoring' },
+		]
+	},
+	{
+		category: 'Examples & Tutorials',
+		items: [
+			{ title: 'Example Use Cases', slug: 'examples' },
+			{ title: 'Tutorial: Adding a New Feature', slug: 'tutorial-new-feature' },
+			{ title: 'Tutorial: Custom Email Templates', slug: 'tutorial-email-templates' },
 		]
 	},
 	{
 		category: 'Reference',
 		items: [
-			{ title: 'API Reference', slug: 'api-reference' },
 			{ title: 'Troubleshooting', slug: 'troubleshooting' },
+			{ title: 'FAQ', slug: 'faq' },
+			{ title: 'Changelog', slug: 'changelog' },
+			{ title: 'Contributing', slug: 'contributing' },
 		]
 	},
 ];

@@ -4,16 +4,25 @@ import DocPage from '../../layouts/DocPage.astro';
 
 export async function getStaticPaths() {
 	const docs = await getCollection('docs');
-	return docs.map((doc) => ({
-		params: { slug: doc.id.replace('.md', '') },
-		props: { doc },
-	}));
+	const paths = [] as { params: { slug: string }; props: { doc: any } }[];
+
+	for (const doc of docs) {
+		const base = doc.id.replace('.md', '');
+		const lower = base.toLowerCase();
+
+		// Original filename case (e.g., 'README')
+		paths.push({ params: { slug: base }, props: { doc } });
+		// Lowercase alias (e.g., 'readme')
+		if (lower !== base) paths.push({ params: { slug: lower }, props: { doc } });
+	}
+
+	return paths;
 }
 
 const { doc } = Astro.props;
 const { Content } = await render(doc);
 
-const title = doc.id.replace('.md', '').split('-').map(word => 
+const title = doc.id.replace('.md', '').split('-').map((word: any) => 
 	word.charAt(0).toUpperCase() + word.slice(1)
 ).join(' ');
 ---
