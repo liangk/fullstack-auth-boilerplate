@@ -1,0 +1,5 @@
+[submodule "docs-lite"]
+	path = docs-lite
+	url = https://github.com/liangk/docs-lite.git
+	branch = develop
+
