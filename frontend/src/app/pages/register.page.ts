@@ -64,7 +64,7 @@ export class RegisterPage {
           });
         } else {
           // Skip verification, go to dashboard
-          this.router.navigateByUrl('/');
+          this.router.navigateByUrl('/dashboard');
         }
       },
       error: (e) => {

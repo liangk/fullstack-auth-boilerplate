@@ -62,7 +62,7 @@ export class LoginPage {
     this.loading = true;
     this.auth.login(this.form.value as any).subscribe({
       next: () => {
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('/dashboard');
       },
       error: (e) => {
         const msg = e?.error?.message || 'Login failed';
