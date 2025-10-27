@@ -27,7 +27,7 @@ export class AuthService {
   logout(): void {
     this.http.post<void>(`${this.base}/logout`, {}, { withCredentials: true }).subscribe(() => {
       this._isAuthenticated$.next(false);
-      this.router.navigateByUrl('/login');
+      this.router.navigateByUrl('/');
     });
   }
 

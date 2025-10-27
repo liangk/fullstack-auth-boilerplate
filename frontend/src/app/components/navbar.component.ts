@@ -11,9 +11,10 @@ import { AuthService } from '../services/auth.service';
   imports: [RouterLink, MatToolbarModule, MatButtonModule, AsyncPipe ],
   template: `
     <header>
-      <div class="home" routerLink="/">Home</div>
+      <div class="home" routerLink="/">StackInsight Auth Lite</div>
       @if (auth.isAuthenticated$ | async) {
         <div class="actions">
+          <button mat-button routerLink="/dashboard">Dashboard</button>
           <button mat-button routerLink="/profile">Profile</button>
           <button mat-raised-button color="accent" (click)="logout()">Logout</button>
         </div>

@@ -1,0 +1,205 @@
+<!-- Hero Section -->
+<section class="hero">
+  <div class="container">
+    <div class="demo-badge">
+      🎯 Live Demo - StackInsight Auth Lite
+    </div>
+
+    <h1>Explore Auth Flows in Action</h1>
+    <h2 class="subtitle">Built with the StackInsight Auth Lite starter</h2>
+
+    <p class="lead">
+      This demo highlights the implemented email/password authentication flows: registration, email
+      verification, login, profile updates, password resets, and dashboard analytics. Everything you
+      see here runs off the public StackInsight Auth Lite codebase.
+    </p>
+
+    <div class="demo-accounts">
+      <h3>Demo Accounts:</h3>
+      <div class="account-grid">
+        <div class="account-card">
+          <strong>Sample User #1</strong>
+          <code>alice@example.com</code>
+          <code>Password123!</code>
+        </div>
+        <div class="account-card">
+          <strong>Sample User #2</strong>
+          <code>bob@example.com</code>
+          <code>Password123!</code>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta-buttons">
+      <a routerLink="/login" class="btn btn-primary btn-large">Try Demo Login</a>
+      <a routerLink="/register" class="btn btn-outline btn-large">Create Free Account</a>
+    </div>
+
+    <p class="note">
+      💡 Demo users are recreated via the Prisma seed script. Run `npm run prisma:seed` (or the Docker helper) if you need to refresh them locally.
+    </p>
+  </div>
+</section>
+
+<!-- Features Section -->
+<section class="features">
+  <div class="container">
+    <h2>Features You Can Try Right Now</h2>
+    <p class="subtitle">These flows ship out of the box with StackInsight Auth Lite</p>
+    
+    <div class="feature-grid">
+      <div class="feature-card" *ngFor="let feature of features">
+        <div class="feature-icon">{{ feature.icon }}</div>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+        <div class="demo-action">
+          <strong>Try it:</strong> {{ feature.demoAction }}
+        </div>
+      </div>
+    </div>
+    
+    <div class="tech-stack">
+      <h3>Built With:</h3>
+      <div class="tech-badges">
+        <span class="badge" *ngFor="let tech of techStack">{{ tech }}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing">
+  <div class="container">
+    <div class="placeholder-notice">
+      📋 Placeholder Content - Customize for Your SaaS
+    </div>
+    
+    <h2>Example Pricing Structure</h2>
+    <p class="subtitle">
+      This is a placeholder to show how pricing tables look with StackInsight.
+      Customize these plans for your own SaaS product.
+    </p>
+    
+    <div class="pricing-grid">
+      <div class="pricing-card" *ngFor="let plan of pricingPlans" [class.featured]="plan.isPopular">
+        <div class="popular-badge" *ngIf="plan.isPopular">Most Popular</div>
+        <h3>{{ plan.name }}</h3>
+        <div class="price">{{ plan.price }}<span>{{ plan.period }}</span></div>
+        <ul class="features-list">
+          <li *ngFor="let feature of plan.features">{{ feature }}</li>
+        </ul>
+        <button class="btn" 
+                [class.btn-primary]="plan.isPopular"
+                [class.btn-outline]="!plan.isPopular"
+                [disabled]="plan.buttonDisabled">
+          {{ plan.buttonText }}
+        </button>
+      </div>
+    </div>
+    
+    <div class="integration-note">
+      <h3>💳 Payment Integration Placeholder</h3>
+      <p>
+        StackInsight Auth Lite does not bundle a payment provider. Use this section as a visual starting
+        point and wire it up to your own billing system when you're ready.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials">
+  <div class="container">
+    <div class="placeholder-notice">
+      📋 Placeholder Content - Add Your Customer Testimonials
+    </div>
+    
+    <h2>What Developers Are Saying</h2>
+    <p class="subtitle">
+      These are example testimonials. Replace with real feedback from your users.
+    </p>
+    
+    <div class="testimonial-grid">
+      <div class="testimonial-card" *ngFor="let testimonial of testimonials">
+        <div class="quote-mark">"</div>
+        <p class="quote">{{ testimonial.quote }}</p>
+        <div class="author">
+          <div class="avatar">{{ testimonial.avatar }}</div>
+          <div class="author-info">
+            <div class="name">{{ testimonial.author }}</div>
+            <div class="role">{{ testimonial.role }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="customization-note">
+      <p>
+        💡 <strong>Customization Tip:</strong> This testimonial section is fully editable.
+        Connect to your database or CMS to display real customer reviews.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Call-to-Action Section -->
+<section class="final-cta">
+  <div class="container">
+    <!-- Real Demo CTA -->
+    <div class="demo-cta">
+      <h2>Ready to Explore?</h2>
+      <p class="lead">
+        Test the implemented authentication flows, inspect the source, and adapt the starter to your
+        own project.
+      </p>
+
+      <div class="cta-buttons">
+        <a routerLink="/login" class="btn btn-primary btn-large">Login to Demo</a>
+        <a routerLink="/register" class="btn btn-outline btn-large">Create Free Account</a>
+      </div>
+      
+      <div class="demo-features">
+        <span *ngFor="let feature of demoFeatures">{{ feature }}</span>
+      </div>
+    </div>
+    
+    <div class="divider"></div>
+    
+    <!-- Placeholder CTA Example -->
+    <div class="placeholder-cta">
+      <div class="placeholder-notice">
+        📋 Placeholder CTA - Customize for Your Product
+      </div>
+      
+      <h3>Example: Your SaaS Call-to-Action</h3>
+      <p>
+        This section would promote your actual product features and drive conversions.
+        Customize the message, buttons, and design to match your brand.
+      </p>
+      
+      <div class="example-box">
+        <h4>"Start Your 14-Day Free Trial"</h4>
+        <p>No credit card required. Cancel anytime.</p>
+        <button class="btn btn-accent btn-large" disabled>Get Started Free</button>
+      </div>
+    </div>
+    
+    <!-- About StackInsight Auth Lite -->
+    <div class="buy-stackinsight">
+      <h3>🚀 Build Faster with StackInsight Auth Lite</h3>
+      <p>
+        StackInsight Auth Lite is an open-source starter that wires together Angular, Express, Prisma,
+        and JWT cookie authentication. Fork it, extend it, and make it your own.
+      </p>
+
+      <div class="cta-buttons">
+        <a href="https://github.com/liangk/fullstack-auth-boilerplate" class="btn btn-primary btn-large" target="_blank" rel="noopener">View Source on GitHub</a>
+        <a href="https://stackinsight.dev/docs" class="btn btn-outline btn-large">Documentation</a>
+      </div>
+
+      <p class="trust-signal">
+        ✅ MIT licensed • ✅ Production-ready patterns • ✅ Active sample dashboard endpoints
+      </p>
+    </div>
+  </div>
+</section>

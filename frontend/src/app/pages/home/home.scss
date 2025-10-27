@@ -1,0 +1,141 @@
+@use "sass:color";
+
+$primary: #354385;
+$primary-dark: #162133;
+$accent: #48bb78;
+$text-dark: #1a202c;
+$text-light: #718096;
+$bg-light: #f7fafc;
+$border: #e2e8f0;
+
+:host { display: flex; flex-direction: column; width: 100%; }
+
+// Common Styles
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+.placeholder-notice { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); color: #92400e; padding: 12px 24px; border-radius: 8px; text-align: center; font-weight: 600; margin-bottom: 32px; border: 2px dashed #f59e0b; }
+
+// Button Styles
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 32px; border: none; border-radius: 8px;
+  font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-decoration: none; white-space: nowrap;
+  &:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+  &:active { transform: translateY(0); }
+  &:disabled { opacity: 0.5; cursor: not-allowed; &:hover { transform: none; box-shadow: none; } }
+  &-primary { background: linear-gradient(135deg, $primary 0%, $primary-dark 100%); color: white; }
+  &-outline { background: transparent; border: 2px solid $primary; color: $primary; &:hover { background: $primary; color: white; } }
+  &-accent { background: $accent; color: white; &:hover { background: color.adjust($accent, $lightness: -10%); } }
+  &-large { padding: 16px 40px; font-size: 1.125rem; }
+}
+
+// Hero Section
+.hero {
+  background: linear-gradient(135deg, $primary 0%, $primary-dark 100%); color: white; padding: 96px 24px; text-align: center;
+  .demo-badge { display: inline-block; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 8px 24px; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; margin-bottom: 24px; border: 1px solid rgba(255, 255, 255, 0.2); }
+  h1 { font-size: 3.5rem; font-weight: 800; margin-bottom: 16px; @media (max-width: 768px) { font-size: 2.5rem; } }
+  .subtitle { font-size: 1.5rem; font-weight: 400; opacity: 0.9; margin-bottom: 32px; @media (max-width: 768px) { font-size: 1.25rem; } }
+  .lead { font-size: 1.25rem; max-width: 800px; margin: 0 auto 48px; line-height: 1.8; opacity: 0.95; @media (max-width: 768px) { font-size: 1.125rem; } }
+  .demo-accounts {
+    background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+    padding: 32px; margin-bottom: 32px; max-width: 800px; margin-left: auto; margin-right: auto;
+    h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 24px; }
+    .account-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; }
+    .account-card {
+      background: rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 24px;
+      strong { display: block; margin-bottom: 12px; font-weight: 700; }
+      code { display: block; background: rgba(0, 0, 0, 0.2); padding: 8px 16px; border-radius: 4px; font-size: 0.875rem; margin-bottom: 8px; font-family: 'Courier New', monospace; &:last-child { margin-bottom: 0; } }
+    }
+  }
+  .cta-buttons {
+    display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px;
+    @media (max-width: 768px) { flex-direction: column; align-items: center; .btn { width: 100%; max-width: 300px; } }
+  }
+  .note { font-size: 0.9rem; opacity: 0.85; }
+}
+
+// Features Section
+.features {
+  padding: 96px 24px; background: white;
+  h2 { text-align: center; font-size: 2.5rem; margin-bottom: 16px; }
+  .subtitle { text-align: center; color: $text-light; font-size: 1.125rem; margin-bottom: 64px; }
+  .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto 64px; }
+  .feature-card {
+    background: white; border: 1px solid $border; border-radius: 12px; padding: 32px; text-align: center; transition: all 0.3s ease;
+    &:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1); border-color: $primary; }
+    .feature-icon { font-size: 3rem; margin-bottom: 16px; }
+    h3 { font-size: 1.25rem; margin-bottom: 12px; color: $text-dark; }
+    p { color: $text-light; font-size: 0.9rem; margin-bottom: 16px; line-height: 1.6; }
+    .demo-action { background: rgba($primary, 0.05); border-radius: 8px; padding: 12px; font-size: 0.875rem; strong { color: $primary; } }
+  }
+  .tech-stack {
+    text-align: center; background: $bg-light; border-radius: 12px; padding: 32px; max-width: 800px; margin: 0 auto;
+    h3 { font-size: 1.25rem; margin-bottom: 24px; color: $text-dark; }
+    .tech-badges { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; .badge { background: white; border: 1px solid $border; padding: 8px 16px; border-radius: 6px; font-size: 0.875rem; font-weight: 600; color: $text-dark; } }
+  }
+}
+
+// Pricing Section
+.pricing {
+  padding: 96px 24px; background: $bg-light;
+  h2 { text-align: center; font-size: 2.5rem; margin-bottom: 16px; }
+  .subtitle { text-align: center; color: $text-light; font-size: 1.125rem; max-width: 700px; margin: 0 auto 64px; }
+  .pricing-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; max-width: 1200px; margin: 0 auto 48px;
+    @media (max-width: 1024px) { grid-template-columns: 1fr; }
+  }
+  .pricing-card {
+    background: white; border: 1px solid $border; border-radius: 12px; padding: 32px; text-align: center; position: relative;
+    &.featured { border: 2px solid $primary; box-shadow: 0 8px 32px rgba($primary, 0.2); }
+    .popular-badge { background: linear-gradient(135deg, $accent 0%, color.adjust($accent, $lightness: -10%) 100%); color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.875rem; font-weight: 700; margin-bottom: 16px; display: inline-block; }
+    h3 { font-size: 1.75rem; margin-bottom: 16px; }
+    .price { font-size: 3rem; font-weight: 800; color: $primary; margin-bottom: 8px; span { font-size: 1.5rem; color: $text-light; font-weight: 400; } }
+    .features-list { list-style: none; padding: 0; margin: 32px 0; text-align: left; li { padding: 12px 0; color: $text-dark; font-size: 0.95rem; border-bottom: 1px solid $border; &:last-child { border-bottom: none; } } }
+    .btn { width: 100%; }
+  }
+  .integration-note { text-align: center; max-width: 700px; margin: 0 auto; padding: 32px; background: rgba($primary, 0.05); border-radius: 12px; border: 2px solid rgba($primary, 0.2); h3 { margin-bottom: 16px; color: color.adjust($primary, $lightness: -10%); } p { color: #475569; margin: 0; } }
+}
+
+// Testimonials Section
+.testimonials {
+  padding: 96px 24px; background: white;
+  h2 { text-align: center; font-size: 2.5rem; margin-bottom: 16px; }
+  .subtitle { text-align: center; color: $text-light; font-size: 1.125rem; margin-bottom: 64px; }
+  .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; max-width: 1200px; margin: 0 auto 48px; }
+  .testimonial-card {
+    background: $bg-light; border: 1px solid $border; border-radius: 12px; padding: 32px; position: relative;
+    .quote-mark { font-size: 4rem; color: $border; position: absolute; top: 16px; left: 24px; font-family: Georgia, serif; }
+    .quote { font-size: 1rem; line-height: 1.8; color: #334155; margin-bottom: 24px; position: relative; z-index: 1; }
+    .author {
+      display: flex; align-items: center; gap: 16px;
+      .avatar { width: 48px; height: 48px; background: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid $border; }
+      .author-info { .name { font-weight: 700; color: #1e293b; margin-bottom: 4px; } .role { font-size: 0.875rem; color: $text-light; } }
+    }
+  }
+  .customization-note { text-align: center; max-width: 700px; margin: 0 auto; padding: 24px; background: rgba($primary, 0.05); border-radius: 8px; border: 1px solid rgba($primary, 0.2); p { margin: 0; color: #475569; } strong { color: $primary; } }
+}
+
+// Final CTA Section
+.final-cta {
+  padding: 96px 24px; background: linear-gradient(135deg, $bg-light 0%, color.adjust($bg-light, $lightness: 2%) 100%);
+  .container { max-width: 900px; margin: 0 auto; }
+  .demo-cta {
+    text-align: center; margin-bottom: 64px;
+    h2 { font-size: 3rem; margin-bottom: 24px; color: $text-dark; @media (max-width: 768px) { font-size: 2rem; } }
+    .lead { font-size: 1.25rem; color: $text-light; margin-bottom: 32px; line-height: 1.8; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px; @media (max-width: 768px) { flex-direction: column; align-items: center; .btn { width: 100%; max-width: 300px; } } }
+    .demo-features { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; span { font-size: 0.95rem; color: #475569; font-weight: 600; } }
+  }
+  .divider { height: 2px; background: linear-gradient(90deg, transparent 0%, $border 50%, transparent 100%); margin: 64px 0; }
+  .placeholder-cta {
+    text-align: center; margin-bottom: 64px;
+    h3 { font-size: 1.75rem; margin-bottom: 16px; color: $text-dark; }
+    p { color: $text-light; margin-bottom: 32px; }
+    .example-box { background: white; border: 2px solid $border; border-radius: 12px; padding: 32px; max-width: 500px; margin: 0 auto; h4 { font-size: 1.5rem; margin-bottom: 12px; color: $text-dark; } p { font-size: 1rem; color: $text-light; margin-bottom: 24px; } }
+  }
+  .buy-stackinsight {
+    text-align: center; background: linear-gradient(135deg, $primary 0%, $primary-dark 100%); color: white; padding: 48px 32px; border-radius: 16px;
+    h3 { font-size: 2rem; margin-bottom: 16px; @media (max-width: 768px) { font-size: 1.5rem; } }
+    p { font-size: 1.125rem; opacity: 0.95; margin-bottom: 32px; strong { color: #fbbf24; } }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; @media (max-width: 768px) { flex-direction: column; align-items: center; .btn { width: 100%; max-width: 300px; } } .btn-outline { background: transparent; border: 2px solid white; color: white; &:hover { background: white; color: $primary; } } }
+    .trust-signal { font-size: 0.95rem; opacity: 0.9; margin: 0; }
+  }
+}
