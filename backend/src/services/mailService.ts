@@ -1,10 +1,13 @@
 import { mailer } from '../utils/mailer';
 
 export async function sendVerificationEmail(to: string, token: string) {
-  const url = `http://localhost:4200/verify-email?token=${token}`;
+  // Use CORS_ORIGIN for the base URL, fallback to localhost if not set
+  const baseUrl = process.env.CORS_ORIGIN || 'http://localhost:4205';
+  const url = `${baseUrl}/verify-email?token=${token}`;
+  const fromEmail = process.env.SMTP_USER || '"Auth Boilerplate" <noreply@example.com>';
 
   await mailer.sendMail({
-    from: '"Auth Boilerplate" <noreply@example.com>',
+    from: fromEmail,
     to,
     subject: 'Verify your email',
     html: `<p>Click <a href="${url}">here</a> to verify your email.</p>`,
@@ -12,10 +15,13 @@ export async function sendVerificationEmail(to: string, token: string) {
 }
 
 export async function sendPasswordResetEmail(to: string, token: string) {
-  const url = `http://localhost:4200/reset-password?token=${token}`;
+  // Use CORS_ORIGIN for the base URL, fallback to localhost if not set
+  const baseUrl = process.env.CORS_ORIGIN || 'http://localhost:4205';
+  const url = `${baseUrl}/reset-password?token=${token}`;
+  const fromEmail = process.env.SMTP_USER || '"Auth Boilerplate" <noreply@example.com>';
 
   await mailer.sendMail({
-    from: '"Auth Boilerplate" <noreply@example.com>',
+    from: fromEmail,
     to,
     subject: 'Password Reset Request',
     html: `<p>You requested a password reset. Click <a href="${url}">here</a> to reset your password.</p>
