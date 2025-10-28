@@ -1,6 +1,6 @@
 # StackInsight Auth Lite
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-brightgreen?style=flat&logo=vercel)](https://fullstack-auth-boilerplate.vercel.app/)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Netlify-00C7B7?style=flat&logo=netlify)](https://lite.stackinsight.app/)
 [![Backend CI](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml/badge.svg)](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/backend-ci.yml)
 [![Frontend CI](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/frontend-ci.yml/badge.svg)](https://github.com/liangk/fullstack-auth-boilerplate/actions/workflows/frontend-ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -13,6 +13,7 @@ This project implements authentication the right way: using **JWTs stored in sec
 
 ## Features
 
+- **Modern Landing Page**: Responsive landing page with feature showcase, pricing tables, and testimonials.
 - **Secure JWT Authentication**: Access/refresh tokens stored in `HttpOnly` cookies.
 - **Refresh Token Rotation**: Automatically rotates refresh tokens to prevent replay attacks.
 - **Email Verification**: New user accounts must be verified via a secure email link.
@@ -31,7 +32,7 @@ This project implements authentication the right way: using **JWTs stored in sec
 | **Backend**  | [Node.js](https://nodejs.org/), [Express](https://expressjs.com/), [Prisma](https://www.prisma.io/), [PostgreSQL](https://www.postgresql.org/), [JWT](https://jwt.io/), [TypeScript](https://www.typescriptlang.org/) |
 | **Frontend** | [Angular 20](https://angular.io/), [Angular Material](https://material.angular.io/), [RxJS](https://rxjs.dev/), [SCSS](https://sass-lang.com/), [TypeScript](https://www.typescriptlang.org/), [ngx-lite-form](https://www.npmjs.com/package/ngx-lite-form) |
 | **DevOps**   | [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/), [GitHub Actions](https://github.com/features/actions) |
-| **Deployment** | [Vercel](https://vercel.com) (Frontend), [Render](https://render.com) (Backend), [Neon](https://neon.tech) (Database) |
+| **Deployment** | [Netlify](https://netlify.com) (Frontend), [Render](https://render.com) (Backend), [Neon](https://neon.tech) (Database) |
 
 ## Getting Started
 
@@ -178,6 +179,7 @@ frontend/
       guards/      # Angular route guards (e.g., AuthGuard)
       interceptors/ # HTTP interceptors (e.g., for adding auth tokens)
       pages/       # Page-level components
+        home/      # Landing page with features and pricing
       services/    # Angular services (e.g., AuthService)
       routes.ts    # Application routes
     environments/  # Environment-specific configuration
@@ -191,15 +193,15 @@ frontend/
 
 This project is deployed using a modern, scalable architecture:
 
-- **Frontend**: [Vercel](https://vercel.com) - Global CDN with automatic deployments
+- **Frontend**: [Netlify](https://netlify.com) - Global CDN with automatic deployments
 - **Backend**: [Render.com](https://render.com) - Dockerized Node.js with auto-deploy
 - **Database**: [Neon.tech](https://neon.tech) - Serverless PostgreSQL with branching
 
-**Live Demo**: [https://fullstack-auth-boilerplate.vercel.app/](https://fullstack-auth-boilerplate.vercel.app/)
+**Live Demo**: [https://lite.stackinsight.app/](https://lite.stackinsight.app/)
 
 ### Key Architecture Features
 
-- **Vercel Proxy**: Frontend proxies `/api/*` requests to backend, solving cross-origin cookie issues
+- **Netlify Proxy**: Frontend proxies `/api/*` requests to backend, solving cross-origin cookie issues
 - **HTTP-only Cookies**: Secure authentication with `SameSite=Lax` (enabled by proxy)
 - **Automatic Migrations**: Prisma migrations run on every backend deploy
 - **Database Visibility**: Neon provides SQL editor and table browser on free tier
@@ -237,7 +239,7 @@ This project uses **GitHub Actions** for continuous integration. Workflows are d
 
 This boilerplate is built with a security-first mindset.
 
-- **Secure Cookies**: JWTs are stored in `HttpOnly`, `Secure` (in production), and `SameSite=Lax` cookies. The Vercel proxy makes cross-origin requests appear same-origin, allowing secure cookie handling without complex CORS configurations.
+- **Secure Cookies**: JWTs are stored in `HttpOnly`, `Secure` (in production), and `SameSite=Lax` cookies. The Netlify proxy makes cross-origin requests appear same-origin, allowing secure cookie handling without complex CORS configurations.
 - **Password Hashing**: Passwords are hashed using `bcrypt` with salt rounds.
 - **API Protection**: Includes rate limiting, Helmet for security headers, and strict CORS policies.
 - **Input Validation**: All API inputs are validated with express-validator to prevent injection attacks.
