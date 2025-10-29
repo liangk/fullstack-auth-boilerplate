@@ -23,7 +23,9 @@ function setAccessCookie(res: Response, token: string) {
   res.cookie(ACCESS_TOKEN_COOKIE, token, {
     httpOnly: true,
     secure: IS_PROD,
-    sameSite: 'lax', // Use 'lax' since Vercel proxies requests (same-origin)
+    // In production we serve frontend from a different origin (Netlify), so use 'none'
+    // to allow cross-site cookie sending. In development keep 'lax' for convenience.
+    sameSite: IS_PROD ? 'none' : 'lax',
     maxAge: 15 * 60 * 1000, // 15 minutes
     path: '/',
   });
@@ -33,7 +35,8 @@ function setRefreshCookie(res: Response, token: string) {
   res.cookie(REFRESH_TOKEN_COOKIE, token, {
     httpOnly: true,
     secure: IS_PROD,
-    sameSite: 'lax', // Use 'lax' since Vercel proxies requests (same-origin)
+    // See note in setAccessCookie — require 'none' in production for cross-site cookies
+    sameSite: IS_PROD ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     path: '/',
   });
