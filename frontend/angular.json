@@ -20,7 +20,17 @@
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              {
+                "glob": "_redirects",
+                "input": "public",
+                "output": "/"
+              },
+              {
+                "glob": "netlify.toml",
+                "input": ".",
+                "output": "/"
+              }
             ],
             "styles": [
               "src/styles.scss"
