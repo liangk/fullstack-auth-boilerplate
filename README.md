@@ -202,7 +202,12 @@ This project is deployed using a modern, scalable architecture:
 ### Key Architecture Features
 
 - **Netlify Proxy**: Frontend proxies `/api/*` requests to backend, solving cross-origin cookie issues
-- **HTTP-only Cookies**: Secure authentication with `SameSite=Lax` (enabled by proxy)
+  - Uses relative `/api` paths in production for consistent cookie handling
+  - Netlify redirects/proxy configuration included for seamless deployment
+- **HTTP-only Cookies**: Production-ready secure cookie configuration
+  - `Secure` and `SameSite=None` in production for cross-origin security
+  - `HttpOnly` to prevent XSS token access
+  - Automatic cookie handling through Netlify proxy
 - **Automatic Migrations**: Prisma migrations run on every backend deploy
 - **Database Visibility**: Neon provides SQL editor and table browser on free tier
 - **Zero-Downtime Deploys**: Git push triggers automatic deployment to all services
