@@ -1,0 +1,3 @@
+# Netlify redirects for Angular SPA
+/api/*  https://fullstack-auth-boilerplate-frontend.onrender.com/api/:splat  200
+/*      /index.html     200
