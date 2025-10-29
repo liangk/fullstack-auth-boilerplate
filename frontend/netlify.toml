@@ -6,6 +6,6 @@
 
 [[redirects]]
   from = "/api/*"
-  to = "https://fullstack-auth-boilerplate-frontend.onrender.com/api/:splat"
+  to = "https://fullstack-auth-boilerplate-production.up.railway.app/api/:splat"
   status = 200
   force = true
