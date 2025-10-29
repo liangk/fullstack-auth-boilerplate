@@ -1,4 +1,7 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://fullstack-auth-boilerplate-production.up.railway.app/api'
+  // Use relative API path so Netlify can proxy `/api/*` requests to the backend.
+  // This keeps requests same-origin (lite.stackinsight.app) so cookies set by the server
+  // are sent by the browser on subsequent requests.
+  apiUrl: '/api'
 };
